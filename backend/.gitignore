@@ -3,3 +3,7 @@ node_modules
 .env
 
 /src/generated/prisma
+
+# One-shot log exports (may contain PII)
+all-pilot-logs.json
+exports/

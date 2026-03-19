@@ -47,7 +47,7 @@ See **`docs/CUSTOM_DOMAIN_FRONTEND.md`** — add a domain on your **Static Site*
 
 ## 7. Pilot / tester logs
 
-See **`docs/PILOT_LOGS.md`**: logins (email + access code) in `PilotLoginLog`, sessions/questions/chat in existing tables, plus **`[AUDIT]`** JSON lines in Render **Logs**.
+See **`docs/PILOT_LOGS.md`**: one command **`npm run export-all-logs`** → single **`all-pilot-logs.json`** with all sessions, chat, and logins.
 
 ## 8. Frontend (separate step)
 
