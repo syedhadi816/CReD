@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { requireAuth } from "../middleware/auth";
+import { auditLog, truncateForAudit } from "../lib/auditLog";
 import { chat as llmChat } from "../services/ollama";
 
 export const router = Router();
@@ -97,6 +98,8 @@ router.post("/activate", requireAuth, async (req: Request, res: Response) => {
       console.error("LLM activation error:", e);
     }
 
+    auditLog("chat_activate", { sessionId, questionId, userId });
+
     res.status(204).send();
   } catch (e) {
     console.error("Chat activate error:", e);
@@ -180,6 +183,13 @@ router.post("/", requireAuth, async (req: Request, res: Response) => {
       },
     });
 
+    auditLog("chat_user", {
+      sessionId,
+      questionId,
+      userId,
+      content: truncateForAudit(message),
+    });
+
     let reply: string;
     try {
       reply = await llmChat(llmMessages);
@@ -198,6 +208,13 @@ router.post("/", requireAuth, async (req: Request, res: Response) => {
         role: "assistant",
         content: reply,
       },
+    });
+
+    auditLog("chat_assistant", {
+      sessionId,
+      questionId,
+      userId,
+      content: truncateForAudit(reply),
     });
 
     res.json({ content: reply });

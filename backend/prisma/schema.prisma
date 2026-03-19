@@ -17,8 +17,20 @@ model User {
   email     String
   createdAt DateTime @default(now())
 
-  sessions  AssessmentSession[]
-  messages  ChatMessage[]
+  sessions     AssessmentSession[]
+  messages     ChatMessage[]
+  loginEvents  PilotLoginLog[]
+}
+
+/// Successful pilot logins: email, code entered, timestamp (and optional IP).
+model PilotLoginLog {
+  id                 String   @id @default(cuid())
+  user               User     @relation(fields: [userId], references: [id])
+  userId             String
+  email              String
+  accessCodeEntered  String
+  clientIp           String?
+  createdAt          DateTime @default(now())
 }
 
 model AccessCode {

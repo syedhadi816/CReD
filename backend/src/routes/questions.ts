@@ -2,6 +2,8 @@ import { Router, Request, Response } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { requireAuth } from "../middleware/auth";
+import { auditLog } from "../lib/auditLog";
+import { getFinalStepIndexFromStepsJson } from "../lib/questionSteps";
 
 export const router = Router();
 
@@ -40,10 +42,61 @@ router.post("/sessions", requireAuth, async (req: Request, res: Response) => {
     const session = await prisma.assessmentSession.create({
       data: { userId, topic: body.data.topic },
     });
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    });
+    auditLog("assessment_session_start", {
+      sessionId: session.id,
+      userId,
+      email: user?.email,
+      topic: body.data.topic,
+      startedAt: session.startedAt.toISOString(),
+    });
     res.json({ sessionId: session.id });
   } catch (e) {
     console.error("Create session error:", e);
     res.status(500).json({ error: "Failed to create session" });
+  }
+});
+
+/** POST /api/questions/sessions/:sessionId/end — mark assessment session ended (for duration logs). */
+router.post("/sessions/:sessionId/end", requireAuth, async (req: Request, res: Response) => {
+  const userId = (req as Request & { userId: string }).userId;
+  const sessionId = String(req.params.sessionId ?? "");
+  try {
+    const session = await prisma.assessmentSession.findFirst({
+      where: { id: sessionId, userId },
+      include: { user: { select: { email: true } } },
+    });
+    if (!session) {
+      res.status(404).json({ error: "Session not found" });
+      return;
+    }
+    if (session.endedAt) {
+      const durationMs = session.endedAt.getTime() - session.startedAt.getTime();
+      res.json({ ok: true, alreadyEnded: true, durationMs });
+      return;
+    }
+    const endedAt = new Date();
+    await prisma.assessmentSession.update({
+      where: { id: sessionId },
+      data: { endedAt },
+    });
+    const durationMs = endedAt.getTime() - session.startedAt.getTime();
+    auditLog("assessment_session_end", {
+      sessionId,
+      userId,
+      email: session.user.email,
+      topic: session.topic,
+      durationMs,
+      startedAt: session.startedAt.toISOString(),
+      endedAt: endedAt.toISOString(),
+    });
+    res.json({ ok: true, durationMs });
+  } catch (e) {
+    console.error("End session error:", e);
+    res.status(500).json({ error: "Failed to end session" });
   }
 });
 
@@ -69,6 +122,13 @@ router.post("/sessions/:sessionId/attempts", requireAuth, async (req: Request, r
         sessionId,
         questionId: body.data.questionId,
       },
+    });
+    auditLog("question_attempt_start", {
+      attemptId: attempt.id,
+      sessionId,
+      userId,
+      questionId: body.data.questionId,
+      startedAt: attempt.startedAt.toISOString(),
     });
     res.json({ attemptId: attempt.id });
   } catch (e) {
@@ -125,6 +185,8 @@ router.post("/attempts/:attemptId/check", requireAuth, async (req: Request, res:
       return;
     }
     const question = attempt.question;
+    const finalStepIndex = getFinalStepIndexFromStepsJson(question.stepsJson);
+    const isFinalCheck = body.data.stepIndex === finalStepIndex;
 
     const normalize = (s: string): string => s.trim().toLowerCase().replace(/\s+/g, " ");
 
@@ -154,12 +216,31 @@ router.post("/attempts/:attemptId/check", requireAuth, async (req: Request, res:
       select: { stepIndex: true },
     });
     const completedIndices = [...new Set(completedNow.map((s) => s.stepIndex))].sort((a, b) => a - b);
-    if (correct) {
+
+    if (isFinalCheck) {
+      const completedAt = new Date();
       await prisma.questionAttempt.update({
         where: { id: attemptId },
-        data: { completedAt: new Date(), finalCorrect: true },
+        data: {
+          completedAt,
+          finalCorrect: correct,
+          finalAnswerText: body.data.answer,
+        },
+      });
+      const started = attempt.startedAt;
+      const timeSpentMs = completedAt.getTime() - started.getTime();
+      auditLog("question_attempt_complete", {
+        attemptId,
+        sessionId: attempt.sessionId,
+        questionId: question.id,
+        userId,
+        finalCorrect: correct,
+        timeSpentMs,
+        startedAt: started.toISOString(),
+        completedAt: completedAt.toISOString(),
       });
     }
+
     res.json({ correct, completedStepIndices: completedIndices });
   } catch (e) {
     console.error("Check step error:", e);
@@ -196,6 +277,7 @@ router.get("/:id", async (req: Request, res: Response) => {
       res.status(404).json({ error: "Question not found" });
       return;
     }
+    const finalStepIndex = getFinalStepIndexFromStepsJson(q.stepsJson);
     res.json({
       id: q.id,
       prompt: q.prompt,
@@ -203,6 +285,8 @@ router.get("/:id", async (req: Request, res: Response) => {
       type: q.type,
       options: (q.optionsJson as unknown as string[] | null) ?? null,
       correctOptionIndex: q.correctOptionIndex,
+      /** Aligns client final "Check" with server completion + analytics. */
+      finalStepIndex,
     });
   } catch (e) {
     console.error("Get question error:", e);

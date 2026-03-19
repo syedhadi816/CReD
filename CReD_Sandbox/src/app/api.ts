@@ -34,8 +34,26 @@ export async function getQuestion(questionId: string) {
     id: string;
     prompt: string;
     topic: string;
-    steps: { index: number; id: string; label: string; prompt: string }[];
+    /** Server-derived; use for final answer check stepIndex. */
+    finalStepIndex?: number;
+    steps?: { index: number; id: string; label: string; prompt: string }[];
   }>;
+}
+
+/** Mark assessment session ended (duration in DB + optional duplicate [AUDIT] in logs). */
+export async function endSession(sessionId: string) {
+  const token = getToken();
+  if (!token || !sessionId) return;
+  const url = `${API_BASE}/api/questions/sessions/${encodeURIComponent(sessionId)}/end`;
+  try {
+    await fetch(url, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      keepalive: true,
+    });
+  } catch {
+    /* non-blocking */
+  }
 }
 
 export async function createSession(topic: string) {

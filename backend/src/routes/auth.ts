@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
+import { auditLog, clientIp } from "../lib/auditLog";
 
 export const router = Router();
 
@@ -51,6 +52,22 @@ router.post("/login", async (req: Request, res: Response) => {
     await prisma.accessCode.update({
       where: { id: code.id },
       data: { usedCount: code.usedCount + 1 },
+    });
+
+    const ip = clientIp(req);
+    await prisma.pilotLoginLog.create({
+      data: {
+        userId: user.id,
+        email: user.email,
+        accessCodeEntered: accessCode.trim(),
+        clientIp: ip,
+      },
+    });
+    auditLog("pilot_login", {
+      userId: user.id,
+      email: user.email,
+      accessCodeEntered: accessCode.trim(),
+      clientIp: ip,
     });
 
     res.json({

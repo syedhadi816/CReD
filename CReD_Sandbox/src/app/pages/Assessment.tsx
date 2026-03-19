@@ -12,6 +12,7 @@ import {
   checkStep,
   sendChat,
   activateHelp,
+  endSession,
 } from '../api';
 
 interface Message {
@@ -31,6 +32,7 @@ interface QuestionDetail {
   type: 'MCQ' | 'FREE_FORM';
   options: string[] | null;
   correctOptionIndex: number | null;
+  finalStepIndex?: number;
   steps?: { index: number; id: string; label: string; prompt: string }[];
 }
 
@@ -82,6 +84,17 @@ export default function Assessment({ topic, sessionId, onBack, onComplete }: Ass
       .finally(() => setLoading(false));
   }, [topic]);
 
+  /** Best-effort session end on tab close / refresh (keepalive fetch). */
+  useEffect(() => {
+    if (!sessionId) return;
+    const sid = sessionId;
+    const onLeave = () => {
+      void endSession(sid);
+    };
+    window.addEventListener('beforeunload', onLeave);
+    return () => window.removeEventListener('beforeunload', onLeave);
+  }, [sessionId]);
+
   useEffect(() => {
     if (questionList.length > 0 && !currentQuestion && sessionId) {
       loadQuestion(questionList[0].id, 0);
@@ -116,9 +129,10 @@ export default function Assessment({ topic, sessionId, onBack, onComplete }: Ass
   };
 
   const finalStepIndex =
-    currentQuestion?.steps && currentQuestion.steps.length > 0
+    currentQuestion?.finalStepIndex ??
+    (currentQuestion?.steps && currentQuestion.steps.length > 0
       ? currentQuestion.steps[currentQuestion.steps.length - 1].index
-      : 0;
+      : 0);
 
   const handleCheckFinal = async () => {
     const answerText =
@@ -166,11 +180,13 @@ export default function Assessment({ topic, sessionId, onBack, onComplete }: Ass
   const handleNextQuestion = () => {
     if (!currentQuestion || questionList.length === 0) return;
     if (currentQuestionIndex >= questionList.length - 1) {
-      onComplete({
-        topic,
-        totalAnswered: questionList.length,
-        totalQuestions: questionList.length,
-      });
+      void endSession(sessionId).then(() =>
+        onComplete({
+          topic,
+          totalAnswered: questionList.length,
+          totalQuestions: questionList.length,
+        }),
+      );
     } else {
       loadQuestion(questionList[currentQuestionIndex + 1].id, currentQuestionIndex + 1);
     }
@@ -222,7 +238,12 @@ export default function Assessment({ topic, sessionId, onBack, onComplete }: Ass
         }}
       >
         <p style={{ color: 'white', marginBottom: '1rem' }}>No questions for this topic yet.</p>
-        <Button onClick={onBack} className="bg-white text-purple-700 hover:bg-gray-100">
+        <Button
+          onClick={() => {
+            void endSession(sessionId).then(() => onBack());
+          }}
+          className="bg-white text-purple-700 hover:bg-gray-100"
+        >
           Back to Topics
         </Button>
       </div>
@@ -281,7 +302,13 @@ export default function Assessment({ topic, sessionId, onBack, onComplete }: Ass
               borderBottom: '1px solid #f3f4f6',
             }}
           >
-            <Button onClick={onBack} variant="ghost" className="flex items-center gap-2">
+            <Button
+              onClick={() => {
+                void endSession(sessionId).then(() => onBack());
+              }}
+              variant="ghost"
+              className="flex items-center gap-2"
+            >
               <ArrowLeft className="w-4 h-4" />
               Back to Topics
             </Button>
