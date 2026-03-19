@@ -39,7 +39,7 @@ Click **Create Web Service**. Wait for the first build (several minutes). When i
 
 ## 5. Pilot access codes
 
-Twenty distributable codes **`CRE26-01` … `CRE26-20`** (plus `123456` / `111111`) — see **`docs/PILOT_ACCESS_CODES.md`**. Created on deploy via seed.
+Twenty distributable 6-digit codes **`620001` … `620020`** (plus `123456` / `111111`) — see **`docs/PILOT_ACCESS_CODES.md`**. Created on deploy via seed.
 
 ## 6. Custom subdomain (frontend)
 

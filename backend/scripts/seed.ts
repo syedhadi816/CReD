@@ -107,10 +107,10 @@ async function main() {
     update: {},
   });
 
-  /** Twenty codes to hand out (one per invitee ideally). Pattern: CRE26-01 … CRE26-20. */
+  /** Twenty codes to hand out (6-digit numeric only): 620001 … 620020. */
   const PILOT_BATCH = 20;
   for (let i = 1; i <= PILOT_BATCH; i++) {
-    const code = `CRE26-${String(i).padStart(2, "0")}`;
+    const code = String(620000 + i);
     await prisma.accessCode.upsert({
       where: { code },
       create: {
@@ -122,7 +122,7 @@ async function main() {
     });
   }
 
-  console.log("Access codes ready: 123456, 111111, plus CRE26-01 … CRE26-20.");
+  console.log("Access codes ready: 123456, 111111, plus 620001 … 620020.");
 
   for (const bank of BANKS) {
     await seedTopic(bank.topic, bank.file);
