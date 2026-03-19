@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "ts-node-dev --respawn src/server.ts",
     "seed": "tsx scripts/seed.ts",
+    "export-session": "tsx scripts/export-session.ts",
     "render-build": "prisma generate && prisma migrate deploy && tsx scripts/seed.ts",
     "start": "tsx src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"

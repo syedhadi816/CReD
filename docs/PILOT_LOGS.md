@@ -1,6 +1,6 @@
 # Pilot / tester activity logs
 
-Two ways to review what testers did:
+Ways to review or **download** what testers did:
 
 ## 1. Render dashboard → **Logs**
 
@@ -23,7 +23,49 @@ In Render: open your **Web Service** → **Logs** → filter or search for `[AUD
 
 **Note:** Log retention and search are limited; use the database for a full history.
 
-## 2. SQLite / Postgres (source of truth)
+## 2. Download one session (or all sessions for a user) as JSON
+
+The backend includes an export script that bundles **session info, question attempts, step answers, full chat, and recent pilot logins** for that user.
+
+### On your computer (local DB)
+
+From the **`backend`** folder:
+
+```bash
+# One session by id (id comes from DB or [AUDIT] logs: assessment_session_start)
+npx tsx scripts/export-session.ts --session YOUR_SESSION_ID > session.json
+
+# Every assessment session for one email (writes one file per session)
+mkdir -p exports
+npx tsx scripts/export-session.ts --email tester@example.com --out ./exports
+```
+
+`DATABASE_URL` must point at your database (e.g. in `.env`).
+
+### On Render (production data)
+
+1. Open your **Web Service** (API) → **Shell** (paid plans).
+2. You should already be in the app directory (where `package.json` is). If not: `cd` to it.
+3. Run (Render already sets `DATABASE_URL` for the service):
+
+```bash
+npx tsx scripts/export-session.ts --email "tester@example.com" --out /tmp/exports
+ls /tmp/exports
+```
+
+Or print to the terminal and **copy/paste** into a file on your machine:
+
+```bash
+npx tsx scripts/export-session.ts --session YOUR_SESSION_ID
+```
+
+**Finding `sessionId`:** In **Logs**, search for `[AUDIT]` and `assessment_session_start` — the JSON line includes `sessionId`. Or run the SQL below to list recent sessions.
+
+**Note:** If Shell is not available, use the SQL section below or copy DB off the instance another way; moving to **Postgres** makes backups/exports easier later.
+
+---
+
+## 3. SQLite / Postgres (source of truth)
 
 | Data | Table(s) |
 |------|-----------|
@@ -40,6 +82,14 @@ SELECT datetime("createdAt") AS at, email, "accessCodeEntered", "clientIp"
 FROM "PilotLoginLog"
 ORDER BY "createdAt" DESC
 LIMIT 50;
+
+-- Sessions for one email (use id with export-session --session)
+SELECT s.id, u.email, s.topic,
+       datetime(s."startedAt") AS start_at
+FROM "AssessmentSession" s
+JOIN "User" u ON u.id = s."userId"
+WHERE u.email = 'tester@example.com'
+ORDER BY s."startedAt" DESC;
 
 -- Sessions with duration (seconds)
 SELECT s.id, u.email, s.topic,
@@ -70,6 +120,6 @@ WHERE "sessionId" = 'YOUR_SESSION_ID'
 ORDER BY "createdAt";
 ```
 
-## HTTPS on Render
+## 4. HTTPS on Render
 
 Render provides **HTTPS** for `*.onrender.com` on all tiers. If a browser showed “Not secure”, it was usually **mixed content** (e.g. frontend on `http://` calling an API on `https://`) or a **custom domain** DNS issue—not the lack of SSH. Starter still helps with uptime, scaling, and features.
