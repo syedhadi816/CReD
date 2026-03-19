@@ -37,11 +37,19 @@ Click **Create Web Service**. Wait for the first build (several minutes). When i
 - The service **spins down** after idle time; the **first request** after that can take ~30–60 seconds.
 - **SQLite** lives on the instance disk. **New deploys** can reset it; the **build** runs migrations + seed so questions/access codes come back. Pilot **user/chat** data may be lost on redeploy — fine for early testing; use **Postgres** later if you need durable history.
 
-## 5. Pilot / tester logs
+## 5. Pilot access codes
+
+Twenty distributable codes **`CRE26-01` … `CRE26-20`** (plus `123456` / `111111`) — see **`docs/PILOT_ACCESS_CODES.md`**. Created on deploy via seed.
+
+## 6. Custom subdomain (frontend)
+
+See **`docs/CUSTOM_DOMAIN_FRONTEND.md`** — add a domain on your **Static Site** and a **CNAME** at your DNS host.
+
+## 7. Pilot / tester logs
 
 See **`docs/PILOT_LOGS.md`**: logins (email + access code) in `PilotLoginLog`, sessions/questions/chat in existing tables, plus **`[AUDIT]`** JSON lines in Render **Logs**.
 
-## 6. Frontend (separate step)
+## 8. Frontend (separate step)
 
 Point the Vite app at this API:
 
