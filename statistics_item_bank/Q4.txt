@@ -1,0 +1,18 @@
+Question: Select the outlier in the data set. If the outlier were removed, would the mean increase or decrease?
+2, 72, 74, 79, 83, 85, 93, 95, 99
+What is an outlier?
+An outlier is a number that is significantly different from the rest of the values in a data set — it stands out as unusually high or low compared to the others.
+What is the outlier here?
+Looking at the data set, every number is between 72 and 99 — except for one. The number 2 is far lower than all the others, making it the clear outlier.
+What is the current mean?
+Let's add all 9 numbers together:
+2 + 72 + 74 + 79 + 83 + 85 + 93 + 95 + 99 = 682
+Now divide by 9:
+682 ÷ 9 = 75.8
+What happens when we remove the outlier (2)?
+Now we have 8 numbers. Let's add them up:
+682 - 2 = 680
+Divide by the new count (8):
+680 ÷ 8 = 85
+Conclusion:
+If the outlier (2) were removed, the mean would increase from 75.8 to 85. This makes sense because the very low number 2 was dragging the average down — removing it pulls the mean back up toward where most of the data sits.

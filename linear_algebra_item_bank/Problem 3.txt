@@ -1,0 +1,102 @@
+Problem 3
+(I)
+[Chapter 2, Section 2.6]
+A smartphone camera sensor records incoming light in two raw channels, Channel A and Channel B, which must be linearly transformed to produce corrected outputs: brightness and color balance. Each unit of Channel A contributes 60% to brightness and 20% to color balance, while each unit of Channel B contributes 20% to brightness and 80% to color balance.
+
+Let x = [[x1], [x2]] represent the raw sensor readings.
+Define the linear transformation T : R^2 -> R^2 that maps x to the corrected output and express it in matrix form T(x) = Ax.
+Then compute the corrected output for x = [[5], [3]], determine whether the transformation is invertible and interpret what this implies about recovering the original sensor readings, and describe the column space of A in terms of the range of achievable corrected outputs.
+
+Solution:
+First of all, we have to convert the given relationship into a matrix form for our linear transformation T(x) = Ax. We’ll take the coefficients representing the contributions of Channel A (x1) and Channel B (x2) to make matrix A, and the raw sensor readings to make the vector x.
+[Section 2.6 (Linear Transformations) -> Section 1.4 (Matrix Notation and Matrix Multiplication)]
+
+The equations for the corrected outputs are:
+Brightness = 0.6x1 + 0.4x2
+Color Balance = 0.2x1 + 0.8x2
+
+Now, we’ll write the linear transformation in T(x) = Ax form:
+A = [[0.6, 0.4], [0.2, 0.8]], x = [[x1], [x2]]
+
+T(x) = [[0.6, 0.4], [0.2, 0.8]] [[x1], [x2]]
+
+Next, we are asked to compute the corrected output for the specific raw sensor readings x = [[5], [3]]. We achieve this by multiplying matrix A with our vector x.
+[Section 1.4 (Matrix Notation and Matrix Multiplication) -> 1.2 (The Geometry of Linear Equations)]
+
+A [[5], [3]] = [[0.6(5) + 0.4(3)], [0.2(5) + 0.8(3)]]
+
+A [[5], [3]] = [[4.2], [3.4]]
+
+Hence,
+Brightness = 4.2
+Color Balance = 3.4
+
+T([[5], [3]]) = [[4.2], [3.4]]
+
+Now, we have to determine whether the transformation is invertible. To check for invertibility, we calculate the determinant of matrix A. If the determinant is non-zero, the matrix is invertible.
+[Section 1.6 (Inverses and Transposes) -> Section 4.2 (Properties of the Determinant)]
+
+det(A) = (0.6)(0.8) - (0.4)(0.2)
+
+det(A) = 0.48 - 0.08 = 0.40
+
+Since the determinant is 0.40 (which is strictly greater than zero), the matrix A is invertible.
+Because the transformation is invertible, it means that no visual information is lost during the processing phase. We can perfectly recover the original raw sensor readings (x1, x2) from the corrected outputs (brightness and color balance) by applying the inverse matrix A^-1.
+
+Finally, we have to describe the column space of A, denoted as C(A), in terms of achievable outputs.
+[Section 2.1 (Vector Spaces and Subspaces) -> Section 2.3 (Linear Independence, Basis, and Dimension)]
+
+The column space is formed by all possible linear combinations of the columns of A:
+C(A) = span { [[0.6], [0.2]], [[0.4], [0.8]] }
+
+Since our two column vectors are not scalar multiples of each other, they are linearly independent. It means, if we use different combinations of each of these columns scaled by the sensor inputs, they will form a basis for the entire 2D space.
+Owing to having 2 independent basis vectors for a target space of R^2, the column space C(A) spans all of R^2. This implies that the camera software's range of achievable corrected outputs is unlimited; it can achieve absolutely any combination of brightness and color balance by feeding the correct theoretical raw sensor inputs.
+
+(II)
+[Chapter 2, Section 2.6]
+A solar array's shadow tracking software models the 2D position of a sensor pole and the shadow it casts on the flat ground. The ground lies perfectly along the horizontal x1-axis. The software applies a linear transformation T: R^2 -> R^2 that projects the tip of the pole x = [[x1], [x2]] straight down onto the ground (setting the vertical x2 component to zero), and then scales the horizontal result by a factor of 3 due to the low angle of the evening sun.
+
+Find the standard matrix A for this composite linear transformation.
+Compute the shadow coordinate for a pole tip located at x = [[2], [5]].
+Determine the nullspace N(A) and provide a physical interpretation of what these vectors represent.
+Explain why this transformation is not invertible based on its column space.
+
+Solution:
+First of all, we have to construct the standard matrix A for the linear transformation T(x). To do this, we observe what the transformation does to the standard basis vectors [[1], [0]] and [[0], [1]].
+[Section 2.6 (Linear Transformations) -> Section 2.1 (Vector Spaces and Subspaces)]
+
+A point at (1, 0) is already on the ground, so projecting it leaves it at (1, 0). Scaling it by 3 moves it to (3, 0).
+A point at (0, 1) points straight up. Projecting it straight down onto the x1-axis flattens it to (0, 0). Scaling (0,0) by 3 leaves it at (0, 0).
+We use these transformed basis vectors as the columns of our matrix A:
+A = [[3, 0], [0, 0]]
+
+Next, we are asked to compute the resulting shadow coordinate for the specific pole tip located at x = [[2], [5]]. We achieve this by multiplying matrix A with our vector x.
+[Section 1.4 (Matrix Notation and Matrix Multiplication) -> 1.2 (The Geometry of Linear Equations)]
+
+T(x) = Ax = [[3, 0], [0, 0]] [[2], [5]]
+
+Solving the arithmetic we get:
+Horizontal Shadow (x1) = 3(2) + 0(5) = 6
+Vertical Height (x2) = 0(2) + 0(5) = 0
+
+T([[2], [5]]) = [[6], [0]]
+
+Now, we have to determine the nullspace N(A) to see which inputs result in a zero vector output. We do this by solving Ax = 0.
+[Section 2.2 (Solving for Ax = 0 and Ax = b) -> Section 1.3 (An Example of Gaussian Elimination)]
+
+[[3, 0], [0, 0]] [[x1], [x2]] = [[0], [0]]
+
+This gives us the equation 3x1 = 0, which means x1 = 0.
+The variable x2 does not have a pivot, making it a free variable. Let x2 = t.
+Combining this, our nullspace is:
+xn = [[0], [t]] = t [[0], [1]]
+
+Physically, any vector in the form [[0], [t]] represents a pole that is pointing straight up along the y-axis with no horizontal lean. Because the sun is shining straight down in this mathematical projection, a perfectly vertical pole casts a shadow of zero length (it just sits at the origin).
+
+[Section 2.6 (Linear Transformations) -> Section 2.4 (The Four Fundamental Subspaces)]
+
+The column space of A is spanned by its linearly independent columns:
+C(A) = span { [[3], [0]] }
+
+Since the second column is entirely zeros, our column space is only 1-dimensional (it only covers the horizontal x1-axis).
+Because C(A) does not span the entire R^2 target space, the matrix is not invertible (its determinant is (3)(0) - (0)(0) = 0). This implies a loss of information: if the software only sees a shadow at [[6], [0]], it is mathematically impossible to apply an inverse matrix to find the original height of the pole, because any height x2 would have produced the exact same flat shadow.

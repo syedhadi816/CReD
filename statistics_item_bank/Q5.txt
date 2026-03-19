@@ -1,0 +1,16 @@
+Question: There are 14 dogs at the dog park on a busy Saturday. 2 of them are springer spaniels. What is the probability that a randomly selected dog is a springer spaniel?
+How is probability calculated?
+Steps to Find Probability:
+	1	Identify the favorable outcomes — how many of what you're looking for exist.
+	2	Identify the total outcomes — how many total possibilities there are.
+	3	Write it as a fraction: Probability = Favorable Outcomes ÷ Total Outcomes
+Let's solve it!
+Favorable outcomes (springer spaniels) = 2
+Total outcomes (all dogs) = 14
+So our fraction is:
+P(springer spaniel) = 2/14
+We can simplify by dividing both numbers by 2:
+P(springer spaniel) = 1/7
+Conclusion:
+There is a 1 in 7 chance that a randomly selected dog is a springer spaniel.
+ 

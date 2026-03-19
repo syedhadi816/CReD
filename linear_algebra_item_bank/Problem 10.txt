@@ -1,0 +1,137 @@
+Problem 2
+(I)
+[Chapter 3, Section 3.3]
+A small delivery company wants to estimate how fuel consumption depends on the distance traveled. Due to traffic and driving variability, the data is inconsistent. They collect the following data:
+
+Distance (km) | 10 | 20 | 30 | 40
+Fuel Used (liters) | 3 | 5 | 7 | 8
+
+Assume a linear model: y = c + dx
+where
+x: distance (km)
+y: fuel used (liters)
+c, d: constants to be determined
+
+Write the system in matrix form Ax = b. Since the system is overdetermined, compute the least squares solution using: A^T A x = A^T b. Find the best-fit values of c and d. Interpret the slope d in the context of fuel efficiency.
+
+Solution:
+First of all, we have to convert the given data points into a system of linear equations based on our model y = c + dx. By substituting our four (x, y) data points into the model, we get the following equations:
+1c + 10d = 3
+1c + 20d = 5
+1c + 30d = 7
+1c + 40d = 8
+
+We’ll take the coefficients to make matrix A, the unknown constants c, d to make the vector x, and the observed fuel usage 3, 5, 7, and 8 as vector b.
+[Section 1.4 (Matrix Notation and Matrix Multiplication) -> 1.2 (The Geometry of Linear Equations) -> 1.1 (Introduction)]
+
+Now, we’ll write it in Ax = b form:
+[[1, 10], [1, 20], [1, 30], [1, 40]] [[c], [d]] = [[3], [5], [7], [8]]
+
+Now, because we have 4 equations but only 2 unknown variables, this system is overdetermined. A single straight line cannot perfectly pass through all four inconsistent data points simultaneously. Therefore, we must compute the least squares solution to find the approximate line that minimizes the overall error.
+[Section 3.3 (Projections and Least Squares) -> Section 3.2 (Cosines and Projections onto Lines) -> Section 1.6 (Inverses and Transposes)]
+
+To find the best-fit line, we have to solve the normal equations: A^T A x = A^T b.
+First, we need to find the transpose of matrix A, denoted as A^T, by flipping its rows and columns:
+A^T = [[1, 1, 1, 1], [10, 20, 30, 40]]
+
+Next, we multiply A^T by A to get a new square, symmetric matrix A^T A:
+A^T A = [[1, 1, 1, 1], [10, 20, 30, 40]] [[1, 10], [1, 20], [1, 30], [1, 40]] = [[4, 100], [100, 3000]]
+
+Then, we multiply A^T by our target vector b:
+A^T b = [[1, 1, 1, 1], [10, 20, 30, 40]] [[3], [5], [7], [8]] = [[(3+5+7+8)], [(30+100+210+320)]] = [[23], [660]]
+
+Now, we will substitute these computed matrices back into the normal equations A^T A x = A^T b:
+[[4, 100], [100, 3000]] [[c], [d]] = [[23], [660]]
+
+This gives us a new, perfectly solvable system of two equations:
+4c + 100d = 23
+100c + 3000d = 660
+
+Solving the equation we get:
+We can simplify the first equation by dividing it entirely by 4:
+c + 25d = 5.75 => c = 5.75 - 25d
+
+Now, substitute this expression for c into the second equation:
+100(5.75 - 25d) + 3000d = 660
+575 - 2500d + 3000d = 660
+500d = 85
+d = 0.17
+
+Substitute d = 0.17 back into our equation for c:
+c = 5.75 - 25(0.17)
+c = 5.75 - 4.25
+c = 1.5
+
+Combining all, we have our best-fit values: c = 1.5 and d = 0.17.
+The least squares linear model is: y = 1.5 + 0.17x
+
+Finally, we have to interpret the slope d in the context of fuel efficiency.
+The slope d = 0.17 represents the rate of fuel consumption per unit of distance. It means that for every 1 additional kilometer the delivery vehicle travels, it consumes approximately 0.17 liters of fuel. (The constant c = 1.5 liters represents the base fuel used, likely due to engine startup or idling before moving).
+
+(II)
+[Chapter 3, Section 3.3]
+A manufacturing plant wants to estimate how machine maintenance cost depends on the hours of operation. Due to varying workloads and machine age, the data is inconsistent. They collect the following data:
+
+Operation (hours) | 2 | 4 | 6 | 8
+Maintenance Cost (hundreds of $) | 4 | 9 | 11 | 14
+
+Assume a linear model: y = c + dx
+where
+x: operation (hours)
+y: maintenance cost (hundreds of $)
+c, d: constants to be determined
+
+Write the system in matrix form Ax = b. Since the system is overdetermined, compute the least squares solution using: A^T A x = A^T b. Find the best-fit values of c and d. Interpret the slope d in the context of maintenance efficiency.
+
+Solution:
+First of all, we have to convert the given data points into a system of linear equations based on our model y = c + dx. By substituting our four (x, y) data points into the model, we get the following equations:
+1c + 2d = 4
+1c + 4d = 9
+1c + 6d = 11
+1c + 8d = 14
+
+We’ll take the coefficients to make matrix A, the unknown constants c, d to make the vector x, and the observed maintenance costs 4, 9, 11, and 14 as vector b.
+[Section 1.4 (Matrix Notation and Matrix Multiplication) -> 1.2 (The Geometry of Linear Equations) -> 1.1 (Introduction)]
+
+Now, we’ll write it in Ax = b form:
+[[1, 2], [1, 4], [1, 6], [1, 8]] [[c], [d]] = [[4], [9], [11], [14]]
+
+Now, because we have 4 equations but only 2 unknown variables, this system is overdetermined. A single straight line cannot perfectly pass through all four inconsistent data points simultaneously. Therefore, we must compute the least squares solution to find the approximate line that minimizes the overall error.
+[Section 3.3 (Projections and Least Squares) -> Section 3.2 (Cosines and Projections onto Lines) -> Section 1.6 (Inverses and Transposes)]
+
+To find the best-fit line, we have to solve the normal equations: A^T A x = A^T b.
+First, we need to find the transpose of matrix A, denoted as A^T, by flipping its rows and columns:
+A^T = [[1, 1, 1, 1], [2, 4, 6, 8]]
+
+Next, we multiply A^T by A to get a new square, symmetric matrix A^T A:
+A^T A = [[1, 1, 1, 1], [2, 4, 6, 8]] [[1, 2], [1, 4], [1, 6], [1, 8]] = [[4, 20], [20, 120]]
+
+Then, we multiply A^T by our target vector b:
+A^T b = [[1, 1, 1, 1], [2, 4, 6, 8]] [[4], [9], [11], [14]] = [[(4+9+11+14)], [(8+36+66+112)]] = [[38], [222]]
+
+Now, we will substitute these computed matrices back into the normal equations A^T A x = A^T b:
+[[4, 20], [20, 120]] [[c], [d]] = [[38], [222]]
+
+This gives us a new, perfectly solvable system of two equations:
+4c + 20d = 38
+20c + 120d = 222
+
+Solving the equation we get:
+We can simplify the first equation by dividing it entirely by 4:
+c + 5d = 9.5 => c = 9.5 - 5d
+
+Now, substitute this expression for c into the second equation:
+20(9.5 - 5d) + 120d = 222
+190 - 100d + 120d = 222
+20d = 32
+d = 1.6
+
+Substitute d = 1.6 back into our equation for c:
+c = 9.5 - 5(1.6)
+c = 9.5 - 8
+c = 1.5
+
+Combining all, we have our best-fit values: c = 1.5 and d = 1.6.
+The least squares linear model is: y = 1.5 + 1.6x
+
+The slope d = 1.6 represents the rate of maintenance cost increase per hour of operation. It means that for every 1 additional hour the machine operates, it incurs approximately 1.6 units (hundreds of dollars) in maintenance costs. (The constant c = 1.5 units represents the base fixed cost, likely due to routine scheduled checks regardless of hours operated).

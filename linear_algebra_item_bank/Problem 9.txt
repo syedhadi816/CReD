@@ -1,0 +1,229 @@
+Problem 1
+(I)
+[Chapter 2, Section 2.2]
+A bakery produces three daily outputs: loaves of bread, boxes of pastries, and cakes. The bakery uses four ingredient mixes (in kilograms per day) which contribute differently to each product. The production requirements are:
+
+1x_1+2x_2+3x_3+2x_4=5;
+2x_1+3x_2+5x_3+4x_4=8;
+1x_1+1x_2+2x_3+1x_4=3
+
+Given the relationship, convert the equations into matrix form, and use Gaussian elimination method to reduce into echelon form. Identify pivot columns, free variables and determine a basis for column space to check if the production target is achievable. Solve for Ax = 0 to find complete solution as well along with the particular solution for this relationship.
+
+Solution:
+First of all, we have to convert these linear equations in matrix form Ax = b. We’ll take coefficients the make matrix A, the variables x1,x2,x3,x4 to make the vector x, and the production target of bread, pastries, cakes: 5,8 and 3 as vector b.
+[Section 1.4 (Matrix Notation and Matrix Multiplication) -> 1.2 (The Geometry of Linear Equations) -> 1.1 (Introduction)]
+
+Now, we’ll write it in Ax=b form: 
+[[1, 2, 3, 2], [2, 3, 5, 4], [1, 1, 2, 1]] [x_1, x_2, x_3, x_4]^T = [5, 8, 3]^T
+
+Now, we’ll use Gaussian Elimination to reduce our matrix to Echelon form. First of all we’ll make augmented matrix [A | b]. An augmented matrix is nothing just more than a matrix with a additional part added to it, which here is the vector b added to A.
+[Section 2.2 (Solving for Ax = 0 and Ax = b) -> Section 1.5 (Triangular Factors and Row Exchanges) -> Section 1.3 (An Example of Gaussian Elimination) -> Section 1.2 (The Geometry of Linear Equations)]
+
+[[1, 2, 3, 2, |, 5], [2, 3, 5, 4, |, 8], [1, 1, 2, 1, |, 3]]
+
+In order to reduce it to echelon form, it is compulsory for a reduced echelon form (REF) matrix to satisfy following conditions:
+1. All zero rows are at bottom of matrix.
+2. The leading entry (also called the pivot) of each non zero row is 1, and it is to the right of leading entry of the row above.
+3. All entries below a leading entry are zero.
+
+To achieve REF, we are allowed to use elementary row operations, i.e., swapping rows, adding a multiple of a row with another row, multiplying a row by non zero scalar, and in that purpose we have to do the same with our vector b alongside.
+
+Now, let’s reduce the augmented matrix [A|b] into REF:
+
+Eliminate entries to zero below pivot of first column:
+Subtract R1 from R3 : (R3-R1)
+[[1, 2, 3, 2, |, 5], [2, 3, 5, 4, |, 8], [0, -1, -1, -1, |, -2]]
+
+Subtract 2R1 from R2 : (R2-2R1)
+[[1, 2, 3, 2, |, 5], [0, -1, -1, 0, |, -2], [0, -1, -1, -1, |, -2]]
+
+Now, to make the pivot for second column, we’ll multiply R2 with -1: 
+[[1, 2, 3, 2, |, 5], [0, 1, 1, 0, |, 2], [0, -1, -1, -1, |, -2]]
+
+We’ll make entries below second column pivot zero. 
+Adding R2 to R3 : (R3+R2)
+[[1, 2, 3, 2, |, 5], [0, 1, 1, 0, |, 2], [0, 0, 0, -1, |, 0]]
+
+Now, here we can’t make pivot for third column right after pivot of second column, since the value is zero, and there is no need to make pivot in the column right after the previous pivot. We can basically find the next first non-zero in next row and create it pivot. For that, we’ll multiply R3 with -1: 
+[[1, 2, 3, 2, |, 5], [0, 1, 1, 0, |, 2], [0, 0, 0, 1, |, 0]]
+
+This is our final Reduced Echelon Form.
+
+Now, we have to identify pivot and free variables:
+[Section 2.2 (Solving for Ax = 0 and Ax = b) -> Section 1.3 (An Example of Gaussian Elimination)]
+For row 1, we have pivot column 1 c1 = [1, 0, 0]^T which corresponds to variable x1.
+For row 2, we have pivot column 2 c2 = [2, 1, 0]^T which corresponds to variable x2.
+For row 3, we have pivot column 4 c4 = [2, 0, 1]^T which corresponds to variable x4.
+
+Hence, x1, x2, and x4 are pivot variables, while x3 is free variable.
+
+Now, we’ll find basis vectors, which are essentially these pivot columns we’ll take from original matrix A.
+[Section 2.3 (Linear Independence, Basis and Dimension -> Section 2.1 (Vector Spaces and Subspaces) -> Section 1.4 (Matrix Notation and Matrix Multiplication)]
+C(A) = {[1, 2, 1]^T, [2, 3, 1]^T, [2, 4, 1]^T}
+It means, if we can use different combination of each of these columns scaled by some coefficient value and added together to get a new combination of Bread, Pasteries and Cakes products. Owing to having 3 products, our target space is R3.
+
+Now we have to find null space.
+[Section 2.2 (Solving for Ax = 0 and Ax = b) -> Section 2.1 (Vector Spaces and Subspaces) -> Section 1.3 (An example of Gaussian Elimination)]
+The nullspace N(A) tells us the combinations of ingredients that result in zero baked goods. 
+To find it, we solve Ux = 0. 
+The equations from our echelon matrix U are: 
+1x_1+2x_2+ 3x_3+2x_4=0;
+1x_2+ 1x_3+0x_4=0;
+1x_4=0
+
+Since, x3 is a free variable, we can assign any value to it. For general purpose, we’ll assign t to it.
+1x_1+2x_2+ 3t+2x_4=0;
+1x_2+ 1t=0;
+1x_4=0
+
+Solving equation we get:
+x4:
+x_4 = 0
+x3:
+x_3 = t
+x2:
+x_2+t=0 => x_2= -t
+x1:
+x_1+2(-t)+3(t)+2(0)=0;
+x_1+t=0;
+x_1= -t
+
+Combining all, we have:
+x_n = [x_1, x_2, x_3, x_4]^T = [-t, -t, t, 0]^T = t [-1, -1, 1, 0]^T
+Where xn is the null space for any constant t.
+
+Now, we’ll find the complete solution for this problem. 
+[Section 2.2 (Solving for Ax = 0 and Ax = b) -> Section 1.3 (An example of Gaussian Elimination)]
+The complete solution combines one specific way to make the target (xp, a particular solution) with all the ways to make zero (xn, the nullspace). This ensures we capture every single possible combination of ingredients that satisfies the requirement. To find a particular solution xp, we set all free variables to zero and solve for Ux = b. So, let x3 = 0, we have:
+1x_1+2x_2+ 2x_4=5;
+1x_2=2;
+1x_4=0
+
+Solving equation we get:
+x4:
+x_4 = 0
+x3:
+x_3 = 0
+x2:
+x_2+0=2 => x_2= 2
+x1:
+x_1+2(2)+3(0)+2(0)=5;
+x_1+4=5;
+x_1= 1
+
+x_p = [1, 2, 0, 0]^T
+
+Finally, we construct the complete solution by adding our particular solution xp and our nullspace solution xn:
+x_p+x_n = [1, 2, 0, 0]^T + t [-1, -1, 1, 0]^T
+
+---
+
+(II)
+[Chapter 2, Section 2.2]
+A tech manufacturer produces three daily outputs: smartphones, tablets, and laptops. The manufacturer uses four component inventories x1, x2, x3, x4 (in thousands of units per day) which contribute differently to each product. The production requirements are:
+1x_1 + 3x_2 + 2x_3 + 1x_4 = 10;
+1x_1 + 4x_2 + 3x_3 + 1x_4 = 12;
+1x_1 + 5x_2 + 4x_3 + 2x_4 = 15
+
+Given the relationship, convert the equations into matrix form, and use Gaussian elimination method to reduce into echelon form. Identify pivot columns, free variables and determine a basis for column space to check if the production target is achievable. Solve for Ax = 0 to find complete solution as well along with the particular solution for this relationship.
+
+Solution:
+First of all, we have to convert these linear equations in matrix form Ax = b. We’ll take coefficients to make matrix A, the variables x1, x2, x3, x4 to make the vector x, and the production target of smartphones, tablets, laptops: 10, 12 and 15 as vector b.
+[Section 1.4 (Matrix Notation and Matrix Multiplication) -> 1.2 (The Geometry of Linear Equations) -> 1.1 (Introduction)]
+
+A = [[1, 3, 2, 1], [1, 4, 3, 1], [1, 5, 4, 2]], x = [x1, x2, x3, x4]^T, b = [10, 12, 15]^T
+Now, we’ll write it in Ax = b form:
+[[1, 3, 2, 1], [1, 4, 3, 1], [1, 5, 4, 2]] [x_1, x_2, x_3, x_4]^T = [10, 12, 15]^T
+
+Now, we’ll use Gaussian Elimination to reduce our matrix to Echelon form. First of all we’ll make augmented matrix [A | b]. An augmented matrix is nothing more than a matrix with an additional part added to it, which here is the vector b added to A.
+[Section 2.2 (Solving for Ax = 0 and Ax = b) -> Section 1.5 (Triangular Factors and Row Exchanges) -> Section 1.3 (An Example of Gaussian Elimination) -> Section 1.2 (The Geometry of Linear Equations)]
+
+[[1, 3, 2, 1, |, 10], [1, 4, 3, 1, |, 12], [1, 5, 4, 2, |, 15]]
+
+In order to reduce it to echelon form, it is compulsory for a reduced echelon form (REF) matrix to satisfy following conditions:
+1. All zero rows are at bottom of matrix.
+2. The leading entry (also called the pivot) of each non zero row is 1, and it is to the right of leading entry of the row above.
+3. All entries below a leading entry are zero.
+
+To achieve REF, we are allowed to use elementary row operations, i.e., swapping rows, adding a multiple of a row with another row, multiplying a row by non zero scalar, and in that purpose we have to do the same with our vector b alongside.
+
+Now, let’s reduce the augmented matrix [A|b] into REF:
+
+Eliminate entries to zero below pivot of first column:
+Subtract R1 from R2: (R2 - R1)
+[[1, 3, 2, 1, |, 10], [0, 1, 1, 0, |, 2], [1, 5, 4, 2, |, 15]]
+
+Subtract R1 from R3: (R3 - R1)
+[[1, 3, 2, 1, |, 10], [0, 1, 1, 0, |, 2], [0, 2, 2, 1, |, 5]]
+
+We’ll make entries below second column pivot zero.
+Subtract 2R2 from R3: (R3 - 2R2)
+[[1, 3, 2, 1, |, 10], [0, 1, 1, 0, |, 2], [0, 0, 0, 1, |, 1]]
+
+This is our final Reduced Echelon Form (U).
+
+Now, we have to identify pivot and free variables:
+[Section 2.2 (Solving for Ax = 0 and Ax = b) -> Section 1.3 (An Example of Gaussian Elimination)]
+For row 1, we have pivot column 1 c1 which corresponds to variable x1.
+For row 2, we have pivot column 2 c2 which corresponds to variable x2.
+For row 3, we have pivot column 4 c4 which corresponds to variable x4.
+
+Hence, x1, x2, and x4 are pivot variables, while x3 is a free variable.
+
+Now, we’ll find basis vectors, which are essentially these pivot columns we’ll take from original matrix A.
+[Section 2.3 (Linear Independence, Basis and Dimension) -> Section 2.1 (Vector Spaces and Subspaces) -> Section 1.4 (Matrix Notation and Matrix Multiplication)]
+C(A) = {[1, 1, 1]^T, [3, 4, 5]^T, [1, 1, 2]^T}
+It means, if we can use different combination of each of these columns scaled by some coefficient value and added together to get a new combination of Smartphones, Tablets, and Laptops products. Owing to having 3 products, our target space is R^3. Since we have 3 independent basis vectors, the target b is achievable.
+
+Now we have to find null space.
+[Section 2.2 (Solving for Ax = 0 and Ax = b) -> Section 2.1 (Vector Spaces and Subspaces) -> Section 1.3 (An example of Gaussian Elimination)]
+The nullspace N(A) tells us the combinations of components that result in zero manufactured goods. To find it, we solve Ux = 0. 
+The equations from our echelon matrix U are:
+1x_1 + 3x_2 + 2x_3 + 1x_4 = 0;
+1x_2 + 1x_3 + 0x_4 = 0;
+1x_4 = 0
+
+Since x3 is a free variable, we can assign any value to it. For general purpose, we’ll assign t to it.
+1x_1 + 3x_2 + 2t + 1x_4 = 0;
+1x_2 + 1t = 0;
+1x_4 = 0
+
+Solving equation we get:
+x4:
+x_4 = 0
+x3:
+x_3 = t
+x2:
+x_2 + t = 0 => x_2 = -t
+x1:
+x_1 + 3(-t) + 2(t) + 1(0) = 0;
+x_1 - t = 0;
+x_1 = t
+
+Combining all, we have:
+x_n = [x_1, x_2, x_3, x_4]^T = [t, -t, t, 0]^T = t [1, -1, 1, 0]^T
+Where xn is the null space for any constant t.
+
+Now, we’ll find the complete solution for this problem.
+[Section 2.2 (Solving for Ax = 0 and Ax = b) -> Section 1.3 (An example of Gaussian Elimination)]
+The complete solution combines one specific way to make the target (xp, a particular solution) with all the ways to make zero (xn, the nullspace). This ensures we capture every single possible combination of components that satisfies the requirement. To find a particular solution xp, we set all free variables to zero and solve for Ux = b. So, let x3 = 0, we have:
+1x_1 + 3x_2 + 1x_4 = 10;
+1x_2 = 2;
+1x_4 = 1
+
+Solving equation we get:
+x4:
+x_4 = 1
+x3:
+x_3 = 0
+x2:
+x_2 = 2
+x1:
+x_1 + 3(2) + 2(0) + 1(1) = 10;
+x_1 + 6 + 1 = 10;
+x_1 = 3
+
+x_p = [x_1, x_2, x_3, x_4]^T = [3, 2, 0, 1]^T
+
+Finally, we construct the complete solution by adding our particular solution xp and our nullspace solution xn:
+x = x_p + x_n = [3, 2, 0, 1]^T + t [1, -1, 1, 0]^T

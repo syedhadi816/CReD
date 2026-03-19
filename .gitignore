@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Secrets — never commit (use .env.example as a template)
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+**/dist/
+
+# Local SQLite databases (recreate with npm run seed)
+*.db
+*.db-journal
+**/prisma/*.db
+**/prisma/*.db-journal
+
+# LLM interaction logs (may contain prompts)
+llm_logs/
+
+# Prisma generated client (run prisma generate after install)
+backend/src/generated/prisma/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# Redundant archive (source lives in CReD_Sandbox/)
+*.zip

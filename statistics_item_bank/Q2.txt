@@ -1,0 +1,21 @@
+Question: Look at this set of 9 numbers: 32, 62, 64, 51, 35, 84, 12, 70, 40 How would the mean change if the number 50 were added to the set?
+How is mean calculated?
+Steps to Find the Mean:
+	1	Add all the numbers together to get the sum.
+	2	Count how many numbers are in the set.
+	3	Divide the sum by the count.
+What is the current mean?
+Let's add all 9 numbers together:
+32 + 62 + 64 + 51 + 35 + 84 + 12 + 70 + 40 = 450
+Now divide by how many numbers there are (9):
+450 ÷ 9 = 50
+The current mean is 50.
+ 
+What happens when we add 50 to the set?
+Now we have 10 numbers. Let's add them up:
+450 + 50 = 500
+Divide by the new count (10):
+500 ÷ 10 = 50
+The new mean is still 50.
+Conclusion:
+The mean would not change — it stays at 50! This makes sense because we added a number that was exactly equal to the existing mean, so it didn't pull the average up or down.

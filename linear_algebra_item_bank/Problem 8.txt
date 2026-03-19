@@ -1,0 +1,96 @@
+Problem 8
+(I)
+[Chapter 1, Section 1.6]
+A tech company designs a fully connected sensor network with n nodes. The influence of each node on the network is modeled by the matrix
+
+A = [[n, -1, ..., -1], [-1, n, ..., -1], [:, :, ., :], [-1, -1, ..., n]]
+
+The network collects measurements b in R^n from all nodes, and the designer wants to compute the adjustment vector x such that Ax = b. It is proposed that A^-1 has the structured form
+
+A^-1 = 1/(n+1) [[c, 1, ..., 1], [1, c, ..., 1], [:, :, ., :], [1, 1, ..., c]]
+
+Find the value of c, then use this inverse to express x in terms of b, and finally, if all nodes record the same measurement b_0, simplify x and interpret what this implies about the distribution of adjustments across the network.
+
+Solution:
+First of all, we have to find the value of the constant c. To do this, we use the fundamental definition of a matrix inverse, which states that multiplying a matrix by its inverse yields the identity matrix: A A^-1 = I.
+[Section 1.6 (Inverses and Transposes) -> Section 1.4 (Matrix Notation and Matrix Multiplication)]
+
+In the identity matrix I, all off-diagonal entries are equal to 0. We will compute a single off-diagonal entry of the product A A^-1, for instance, row 1 of A multiplied by column 2 of A^-1, and set it to 0.
+
+Row 1 of A is: [[n, -1, -1, ..., -1]]
+Column 2 of A^-1 (ignoring the scalar for a moment) is: [[1], [c], [1], [...], [1]]
+
+Now, we compute the dot product:
+Row_1 * Col_2 = n(1) + (-1)(c) + (-1)(1) * (n-2 remaining terms)
+1/(n+1) (n - c - (n - 2)) = 0
+
+Solving the equation we get:
+n - c - n + 2 = 0
+2 - c = 0
+c = 2
+
+Next, we will use this completed inverse to express the adjustment vector x in terms of the measurements b. Since Ax = b, we know that x = A^-1 b.
+[Section 1.6 (Inverses and Transposes)]
+
+By multiplying A^-1 by the column vector b = [[b_1], [b_2], [...], [b_n]], the i-th component of x is:
+x_i = 1/(n+1) (c b_i + sum_(j != i) b_j)
+
+Substitute c = 2 into the equation:
+x_i = 1/(n+1) (2b_i + sum_(j != i) b_j) = 1/(n+1) (b_i + sum_(j=1)^n b_j)
+
+Finally, we simplify x assuming all nodes record the exact same measurement b_0. If b_i = b_0 for all nodes, then the total sum of all measurements is sum_(j=1)^n b_j = n b_0.
+Substituting this into our expression for x_i:
+x_i = 1/(n+1) (b_0 + n b_0) = 1/(n+1) ((n+1) b_0) = b_0
+
+Since this is true for every component i, the final adjustment vector is:
+x = [[b_0], [b_0], [...], [b_0]]
+
+If every sensor in the fully connected network records an identical measurement b_0, the necessary adjustment at each individual node is simply exactly b_0. Because the mutual negative influences (-1) perfectly balance out the heavy self-weight (n) across the network, uniform inputs result in uniform outputs without any residual scaling or distortion.
+
+(II)
+[Chapter 1, Section 1.6]
+An electrical engineer designs a grid of n interconnected substations. The resistance matrix R modeling the network's impedance has a value of 2 on the diagonal and 1 on all off-diagonals:
+
+R = [[2, 1, ..., 1], [1, 2, ..., 1], [:, :, ., :], [1, 1, ..., 2]]
+
+The network collects current injections i in R^n from all substations, and the engineer wants to compute the voltage vector v such that Rv = i. It is proposed that R^-1 has the structured form
+
+R^-1 = 1/(n+1) [[c, -1, ..., -1], [-1, c, ..., -1], [:, :, ., :], [-1, -1, ..., c]]
+
+Find the value of c, then use this inverse to express v in terms of i, and finally, if all substations inject the exact same current i_0, simplify v and interpret what this implies about the voltage distribution across the grid.
+
+Solution:
+First of all, we have to find the value of the constant c. To do this, we use the fundamental definition of a matrix inverse, which states that multiplying a matrix by its inverse yields the identity matrix: R R^-1 = I.
+[Section 1.6 (Inverses and Transposes) -> Section 1.4 (Matrix Notation and Matrix Multiplication)]
+
+In the identity matrix I, all off-diagonal entries are equal to 0. We will compute a single off-diagonal entry of the product R R^-1, for instance, row 1 of R multiplied by column 2 of R^-1, and set it to 0.
+
+Row 1 of R is: [[2, 1, 1, ..., 1]]
+Column 2 of R^-1 (ignoring the scalar for a moment) is: [[-1], [c], [-1], [...], [-1]]
+
+Now, we compute the dot product:
+Row_1 * Col_2 = 2(-1) + 1(c) + 1(-1) * (n-2 remaining terms)
+1/(n+1) (-2 + c - (n - 2)) = 0
+
+Solving the equation we get:
+-2 + c - n + 2 = 0
+c - n = 0
+c = n
+
+Next, we will use this completed inverse to express the voltage vector v in terms of the current injections i. Since Rv = i, we know that v = R^-1 i.
+[Section 1.6 (Inverses and Transposes)]
+
+By multiplying R^-1 by the column vector i = [[i_1], [i_2], [...], [i_n]], the k-th component of v is:
+v_k = 1/(n+1) (c i_k - sum_(j != k) i_j)
+
+Substitute c = n into the equation:
+v_k = 1/(n+1) (n i_k - sum_(j != k) i_j)
+
+Finally, we simplify v assuming all substations inject the exact same current i_0. If i_j = i_0 for all substations, then the sum of the remaining (n-1) current injections is sum_(j != k) i_j = (n-1) i_0.
+Substituting this into our expression for v_k:
+v_k = 1/(n+1) (n i_0 - (n-1) i_0) = 1/(n+1) (i_0) = i_0 / (n+1)
+
+Since this is true for every component k, the final voltage vector is:
+v = [[i_0 / (n+1)], [i_0 / (n+1)], [...], [i_0 / (n+1)]]
+
+If every substation in the grid injects an identical uniform current i_0, the resulting voltage at each node is heavily scaled down to i_0 / (n+1). Because the substations are positively coupled (off-diagonals are 1), the interconnected grid acts as a massive sink, widely distributing the load and preventing extreme voltage spikes at any single node.

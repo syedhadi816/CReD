@@ -1,0 +1,249 @@
+{
+  "questions": [
+    {
+      "id": "LA-Q1",
+      "prompt": "If matrix $A$ has 2 rows and 3 columns, and matrix $B$ has 3 rows and 4 columns, what is the size of the product $AB$?",
+      "type": "MCQ",
+      "options": [
+        "$2 \\times 4$",
+        "$3 \\times 3$",
+        "$2 \\times 3$",
+        "$4 \\times 2$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Matrix multiplication $AB$ is defined when the number of columns of $A$ equals the number of rows of $B$. The result has the same number of rows as $A$ and the same number of columns as $B$.",
+        "nodes": [
+          {
+            "id": "dimensions",
+            "title": "Check compatibility",
+            "reference": "For $AB$, we need (columns of $A$) = (rows of $B$). Here $A$ is $2\\times 3$ and $B$ is $3\\times 4$, so 3 = 3 works."
+          },
+          {
+            "id": "result-size",
+            "title": "Size of the product",
+            "reference": "$AB$ has rows = rows of $A$ and columns = columns of $B$. So $AB$ is $2\\times 4$."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q2",
+      "prompt": "Compute the matrix-vector product:\n\n$$\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix} \\begin{pmatrix} 2 \\\\ 1 \\end{pmatrix}.$$\n\nWhat is the *first* entry of the result?",
+      "type": "MCQ",
+      "options": [
+        "$4$",
+        "$5$",
+        "$10$",
+        "$6$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Multiply the matrix by the column vector: first row dot vector gives first entry, second row dot vector gives second entry.",
+        "nodes": [
+          {
+            "id": "first-row",
+            "title": "First entry",
+            "reference": "First row of the matrix is $[1, 2]$. Dot with $[2, 1]$ gives $1\\cdot 2 + 2\\cdot 1 = 2 + 2 = 4$."
+          },
+          {
+            "id": "second-row",
+            "title": "Second entry (if needed)",
+            "reference": "Second row $[3, 4]$ dot $[2, 1]$ gives $3\\cdot 2 + 4\\cdot 1 = 10$. So the result is $[4, 10]^{\\top}$."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q3",
+      "prompt": "Solve for $x$ and $y$:\n\n$$\\begin{aligned} 2x + y &= 5 \\\\ x - y &= 1 \\end{aligned}$$\n\nWhat is the value of $x$?",
+      "type": "MCQ",
+      "options": [
+        "$2$",
+        "$1$",
+        "$3$",
+        "$4$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Two linear equations in two unknowns. Add or subtract equations to eliminate one variable, or use substitution.",
+        "nodes": [
+          {
+            "id": "eliminate",
+            "title": "Eliminate $y$",
+            "reference": "Adding the two equations gives $2x+y + x-y = 5+1$, so $3x = 6$, hence $x = 2$."
+          },
+          {
+            "id": "find-y",
+            "title": "Find $y$",
+            "reference": "Substitute $x=2$ into $x-y=1$ to get $2-y=1$, so $y=1$. Check: $2(2)+1=5$ and $2-1=1$."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q4",
+      "prompt": "What is the dot product of $\\mathbf{u} = (3, 4)$ and $\\mathbf{v} = (2, -1)$?",
+      "type": "MCQ",
+      "options": [
+        "$2$",
+        "$5$",
+        "$10$",
+        "$-2$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "The dot product of two vectors is the sum of the products of their corresponding entries: $\\mathbf{u} \\cdot \\mathbf{v} = u_1 v_1 + u_2 v_2$.",
+        "nodes": [
+          {
+            "id": "compute",
+            "title": "Multiply and add",
+            "reference": "$3\\cdot 2 + 4\\cdot(-1) = 6 - 4 = 2$."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q5",
+      "prompt": "Find the determinant of\n\n$$A = \\begin{pmatrix} 2 & 1 \\\\ 3 & 4 \\end{pmatrix}.$$\n\nUse the formula $\\det(A) = ad - bc$ for a $2\\times 2$ matrix.",
+      "type": "MCQ",
+      "options": [
+        "$5$",
+        "$11$",
+        "$8$",
+        "$10$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "For a $2\\times 2$ matrix with entries $a,b$ in the first row and $c,d$ in the second row, $\\det = ad - bc$.",
+        "nodes": [
+          {
+            "id": "formula",
+            "title": "Apply formula",
+            "reference": "Here $a=2$, $b=1$, $c=3$, $d=4$. So $\\det = ad - bc = 2\\cdot 4 - 1\\cdot 3 = 8 - 3 = 5$."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q6",
+      "prompt": "Which of the following is a *linear* equation in $x$ and $y$? (A linear equation has no products like $xy$, no powers like $x^2$, and variables only to the first power.)",
+      "type": "MCQ",
+      "options": [
+        "$2x + 3y = 6$",
+        "$x^2 + y = 1$",
+        "$xy = 4$",
+        "$\\frac{1}{x} + y = 2$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "A linear equation in $x$ and $y$ can be written as $ax + by = c$ for constants $a$, $b$, $c$. No $x^2$, $y^2$, $xy$, or functions like $1/x$.",
+        "nodes": [
+          {
+            "id": "definition",
+            "title": "What makes it linear",
+            "reference": "Linear means each variable appears only to the first power and is multiplied by a constant. $2x+3y=6$ fits. The others have $x^2$, $xy$, or $1/x$."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q7",
+      "prompt": "If $\\mathbf{a} = (1, 0)$ and $\\mathbf{b} = (0, 1)$, what is $3\\mathbf{a} + 2\\mathbf{b}$?",
+      "type": "MCQ",
+      "options": [
+        "$(3, 2)$",
+        "$(2, 3)$",
+        "$(5, 5)$",
+        "$(6, 2)$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Scalar multiplication: $c\\mathbf{v}$ multiplies each entry by $c$. Vector addition: add corresponding entries.",
+        "nodes": [
+          {
+            "id": "scale",
+            "title": "Scale then add",
+            "reference": "$3\\mathbf{a} = 3(1,0) = (3,0)$ and $2\\mathbf{b} = 2(0,1) = (0,2)$. So $3\\mathbf{a}+2\\mathbf{b} = (3,0)+(0,2) = (3,2)$."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q8",
+      "prompt": "Two lines in the plane have equations $y = 2x + 1$ and $y = 2x - 3$. How many points $(x,y)$ satisfy *both* equations?",
+      "type": "MCQ",
+      "options": [
+        "Zero (no solution)",
+        "One (exactly one solution)",
+        "Infinitely many",
+        "Two"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Both lines have the same slope (2) but different $y$-intercepts (1 and $-3$). So they are parallel and never intersect.",
+        "nodes": [
+          {
+            "id": "slope",
+            "title": "Compare slopes",
+            "reference": "Same slope means parallel lines. Different intercepts mean they are distinct, so they do not cross. The system has no solution."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q9",
+      "prompt": "A snack stand sells drinks for **2 dollars** each and pretzels for **3 dollars** each. Sarah buys 2 drinks and 1 pretzel. Which expression gives her total cost?",
+      "type": "MCQ",
+      "options": [
+        "$2(2) + 3(1)$",
+        "$2 + 3$",
+        "$(2+3)(2+1)$",
+        "$2 + 2 + 3$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Total cost = (price per drink $\\times$ number of drinks) + (price per pretzel $\\times$ number of pretzels). This is a linear combination.",
+        "nodes": [
+          {
+            "id": "cost",
+            "title": "Compute cost",
+            "reference": "2 drinks at 2 dollars each: $2\\cdot 2$. 1 pretzel at 3 dollars: $3\\cdot 1$. Total = $2(2)+3(1) = 4+3 = 7$ dollars."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q10",
+      "prompt": "Consider the system\n\n$$\\begin{aligned} x + y &= 3 \\\\ 2x + 2y &= 6 \\end{aligned}$$\n\nThe second equation is just 2 times the first. How many solutions $(x,y)$ does this system have?",
+      "type": "MCQ",
+      "options": [
+        "Infinitely many",
+        "Zero",
+        "One",
+        "Two"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "When one equation is a multiple of the other, they represent the same line. Every point on that line is a solution.",
+        "nodes": [
+          {
+            "id": "same-line",
+            "title": "Same line",
+            "reference": "$2x+2y=6$ is $2(x+y)=2(3)$, so it is the same condition as $x+y=3$. So we only have one line; any point on it (e.g. $(0,3)$, $(1,2)$, $(3,0)$) is a solution."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    }
+  ]
+}

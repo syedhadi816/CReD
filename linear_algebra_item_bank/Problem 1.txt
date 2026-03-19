@@ -1,0 +1,163 @@
+Problem 9
+(I)
+[Chapter 1, Section 1.7]
+A thin rod of length 1 meter is heated along its length. The steady-state temperature distribution u(x) along the rod satisfies the differential equation:
+
+-d^2 u / dx^2 = f(x), 0 <= x <= 1
+
+where f(x) represents a heat source along the rod. The ends of the rod are kept at 0°C:
+
+u(0) = 0, u(1) = 0.
+
+We want to approximate the temperature at 5 equally spaced points along the rod (excluding the ends).
+
+Discretize the differential equation using the second difference approximation:
+(u(x+h) - 2 u(x) + u(x-h)) / h^2 approx -f(x)
+Set up the linear system Au = b corresponding to these points. To compute specific numerical values, assume the constant heat source is f(x) = 36. Solve the system using LU factorization (compute L and U) and find the approximate temperatures.
+
+Solution:
+First of all, we must set up the discretized system by deriving the matrix A and vector b. Because we are evaluating 5 equally spaced interior points, we divide the 1-meter rod into 6 segments. The step size is h = 1/6.
+[Section 1.7 (Special Matrices and Applications) -> Section 1.4 (Matrix Notation)]
+
+To transition from the continuous differential equation -d^2 u / dx^2 = f(x) to a discrete matrix system, we use the second difference approximation for the second derivative at each interior node x_i:
+d^2 u / dx^2 approx (u_{i+1} - 2u_i + u_{i-1}) / h^2
+
+Substituting this into our equation gives:
+-((u_{i+1} - 2u_i + u_{i-1}) / h^2) = f(x_i)
+
+Multiplying both sides by h^2 and distributing the negative sign, we obtain the linear equation for a single node i:
+-u_{i-1} + 2u_i - u_{i+1} = h^2 f(x_i)
+
+Given f(x) = 36 and h^2 = (1/6)^2 = 1/36, the right-hand side for every point simplifies to h^2 f(x_i) = 1.
+
+Now, we apply this equation to our 5 interior points (i = 1, 2, 3, 4, 5). The boundary conditions dictate u_0 = 0 and u_6 = 0, so those terms drop out:
+(i=1): 2u_1 - u_2 = 1 + u_0 => 2u_1 - u_2 = 1
+(i=2): -u_1 + 2u_2 - u_3 = 1
+(i=3): -u_2 + 2u_3 - u_4 = 1
+(i=4): -u_3 + 2u_4 - u_5 = 1
+(i=5): -u_4 + 2u_5 = 1 + u_6 => -u_4 + 2u_5 = 1
+
+When we align these coefficients into rows, the "2"s represent the temperature at the current node, and the "-1"s represent the influence of the immediate left and right neighbors. This forms our tridiagonal matrix A and right-hand side b:
+A = [[2, -1, 0, 0, 0], [-1, 2, -1, 0, 0], [0, -1, 2, -1, 0], [0, 0, -1, 2, -1], [0, 0, 0, -1, 2]], u = [[u_1], [u_2], [u_3], [u_4], [u_5]], b = [[1], [1], [1], [1], [1]]
+
+Next, we perform LU decomposition to factor our matrix A into a lower triangular matrix L and an upper triangular matrix U. We will represent our progress using a combined augmented matrix [L | U]. We start with L as the 5 x 5 identity matrix (inserting our multipliers directly into it) and U as our original matrix A (performing row reduction on it).
+[Section 1.5 (Triangular Factors and Row Exchanges) -> Section 1.3 (An Example of Gaussian Elimination)]
+
+Initial matrix [L | U]:
+[[1, 0, 0, 0, 0, |, 2, -1, 0, 0, 0], [0, 1, 0, 0, 0, |, -1, 2, -1, 0, 0], [0, 0, 1, 0, 0, |, 0, -1, 2, -1, 0], [0, 0, 0, 1, 0, |, 0, 0, -1, 2, -1], [0, 0, 0, 0, 1, |, 0, 0, 0, -1, 2]]
+
+Eliminate entries to zero below pivot of first column:
+Multiplier L21 = -1 / 2 = -1/2. Insert -1/2 into L and subtract (-1/2)R1 from R2 in U : (R2 - (-1/2)R1)
+[[1, 0, 0, 0, 0, |, 2, -1, 0, 0, 0], [-1/2, 1, 0, 0, 0, |, 0, 3/2, -1, 0, 0], [0, 0, 1, 0, 0, |, 0, -1, 2, -1, 0], [0, 0, 0, 1, 0, |, 0, 0, -1, 2, -1], [0, 0, 0, 0, 1, |, 0, 0, 0, -1, 2]]
+
+Eliminate entries to zero below pivot of second column:
+Multiplier L32 = -1 / (3/2) = -2/3. Insert -2/3 into L and subtract (-2/3)R2 from R3 in U : (R3 - (-2/3)R2)
+[[1, 0, 0, 0, 0, |, 2, -1, 0, 0, 0], [-1/2, 1, 0, 0, 0, |, 0, 3/2, -1, 0, 0], [0, -2/3, 1, 0, 0, |, 0, 0, 4/3, -1, 0], [0, 0, 0, 1, 0, |, 0, 0, -1, 2, -1], [0, 0, 0, 0, 1, |, 0, 0, 0, -1, 2]]
+
+Eliminate entries to zero below pivot of third column:
+Multiplier L43 = -1 / (4/3) = -3/4. Insert -3/4 into L and subtract (-3/4)R3 from R4 in U : (R4 - (-3/4)R3)
+[[1, 0, 0, 0, 0, |, 2, -1, 0, 0, 0], [-1/2, 1, 0, 0, 0, |, 0, 3/2, -1, 0, 0], [0, -2/3, 1, 0, 0, |, 0, 0, 4/3, -1, 0], [0, 0, -3/4, 1, 0, |, 0, 0, 0, 5/4, -1], [0, 0, 0, 0, 1, |, 0, 0, 0, -1, 2]]
+
+Eliminate entries to zero below pivot of fourth column:
+Multiplier L54 = -1 / (5/4) = -4/5. Insert -4/5 into L and subtract (-4/5)R4 from R5 in U : (R5 - (-4/5)R4)
+[[1, 0, 0, 0, 0, |, 2, -1, 0, 0, 0], [-1/2, 1, 0, 0, 0, |, 0, 3/2, -1, 0, 0], [0, -2/3, 1, 0, 0, |, 0, 0, 4/3, -1, 0], [0, 0, -3/4, 1, 0, |, 0, 0, 0, 5/4, -1], [0, 0, 0, -4/5, 1, |, 0, 0, 0, 0, 6/5]]
+
+Now we extract our fully formed L and U matrices:
+L = [[1, 0, 0, 0, 0], [-1/2, 1, 0, 0, 0], [0, -2/3, 1, 0, 0], [0, 0, -3/4, 1, 0], [0, 0, 0, -4/5, 1]], U = [[2, -1, 0, 0, 0], [0, 3/2, -1, 0, 0], [0, 0, 4/3, -1, 0], [0, 0, 0, 5/4, -1], [0, 0, 0, 0, 6/5]]
+
+Now, we solve the lower triangular system Lc = b using forward substitution.
+[[1, 0, 0, 0, 0], [-1/2, 1, 0, 0, 0], [0, -2/3, 1, 0, 0], [0, 0, -3/4, 1, 0], [0, 0, 0, -4/5, 1]] [[c_1], [c_2], [c_3], [c_4], [c_5]] = [[1], [1], [1], [1], [1]]
+
+Solving the equations from top to bottom:
+c_1 = 1
+-1/2 c_1 + c_2 = 1 => c_2 = 1 + 1/2 = 3/2
+-2/3 c_2 + c_3 = 1 => c_3 = 1 + 2/3(3/2) = 1 + 1 = 2
+-3/4 c_3 + c_4 = 1 => c_4 = 1 + 3/4(2) = 1 + 3/2 = 5/2
+-4/5 c_4 + c_5 = 1 => c_5 = 1 + 4/5(5/2) = 1 + 2 = 3
+
+Our intermediate vector is c = [[1], [1.5], [2], [2.5], [3]].
+
+Finally, we solve the upper triangular system Uu = c using back substitution.
+[[2, -1, 0, 0, 0], [0, 3/2, -1, 0, 0], [0, 0, 4/3, -1, 0], [0, 0, 0, 5/4, -1], [0, 0, 0, 0, 6/5]] [[u_1], [u_2], [u_3], [u_4], [u_5]] = [[1], [3/2], [2], [5/2], [3]]
+
+Solving the equations from bottom to top:
+6/5 u_5 = 3 => u_5 = 3 * 5/6 = 2.5
+5/4 u_4 - u_5 = 5/2 => 5/4 u_4 - 2.5 = 2.5 => 5/4 u_4 = 5 => u_4 = 4
+4/3 u_3 - u_4 = 2 => 4/3 u_3 - 4 = 2 => 4/3 u_3 = 6 => u_3 = 4.5
+3/2 u_2 - u_3 = 3/2 => 3/2 u_2 - 4.5 = 1.5 => 3/2 u_2 = 6 => u_2 = 4
+2 u_1 - u_2 = 1 => 2 u_1 - 4 = 1 => 2 u_1 = 5 => u_1 = 2.5
+
+The complete solution vector representing the approximate temperatures along the rod is:
+u = [[2.5], [4], [4.5], [4], [2.5]] °C
+
+This symmetrical result aligns perfectly with the physics of the problem. A uniformly heated rod with both ends held at identically cold temperatures (0°C) will naturally form a parabolic temperature profile, reaching its absolute maximum heat (4.5°C) precisely at the midpoint (u_3).
+
+(II)
+[Chapter 1, Section 1.7]
+A civil engineer models the steady-state hydraulic head h(x) of groundwater flow in a 1D confined aquifer of length 1 kilometer. The governing equation is:
+
+-d^2 h / dx^2 = R
+
+where R is the constant recharge rate. The boundary conditions at the ends of the aquifer are fixed by adjacent lakes:
+
+h(0) = 0, h(1) = 0.
+
+The engineer approximates the head at 3 equally spaced interior points. Discretize the differential equation using the second difference approximation, and set up the linear system Ah = b. Assume a constant recharge rate such that the discretized right-hand side is b = [[2], [2], [2]]. Solve the system using LU factorization (compute L and U) and find the approximate hydraulic heads.
+
+Solution:
+First of all, we must set up the discretized system by deriving the matrix A. Because we are evaluating 3 equally spaced interior points, we divide the aquifer into 4 segments. Let the distance between points be Delta x = 1/4.
+[Section 1.7 (Special Matrices and Applications) -> Section 1.4 (Matrix Notation)]
+
+To discretize the differential equation -d^2 h / dx^2 = R, we apply the second difference approximation at each interior node x_i:
+-((h_{i+1} - 2h_i + h_{i-1}) / (Delta x)^2) = R
+
+Multiplying both sides by (Delta x)^2 and distributing the negative sign, we obtain the linear equation for node i:
+-h_{i-1} + 2h_i - h_{i+1} = R (Delta x)^2
+
+The problem states that the resulting right-hand side for each equation equates to 2. Now, we apply this to our 3 interior points (i = 1, 2, 3). Since the boundary conditions dictate h_0 = 0 and h_4 = 0, the boundary terms drop out:
+(i=1): 2h_1 - h_2 = 2 + h_0 => 2h_1 - h_2 = 2
+(i=2): -h_1 + 2h_2 - h_3 = 2
+(i=3): -h_2 + 2h_3 = 2 + h_4 => -h_2 + 2h_3 = 2
+
+Collecting these coefficients into rows, the "2"s represent the head at the current node, and the "-1"s represent the influence of the immediate left and right neighbor nodes. We write this in matrix form Ah = b:
+A = [[2, -1, 0], [-1, 2, -1], [0, -1, 2]], h = [[h_1], [h_2], [h_3]], b = [[2], [2], [2]]
+
+Next, we perform LU decomposition to factor our matrix A into a lower triangular matrix L and an upper triangular matrix U. We will represent our progress using a combined augmented matrix [L | U]. We start with L as the 3 x 3 identity matrix (inserting our multipliers directly into it) and U as our original matrix A (performing row reduction on it).
+[Section 1.5 (Triangular Factors and Row Exchanges) -> Section 1.3 (An Example of Gaussian Elimination)]
+
+Initial matrix [L | U]:
+[[1, 0, 0, |, 2, -1, 0], [0, 1, 0, |, -1, 2, -1], [0, 0, 1, |, 0, -1, 2]]
+
+Eliminate entries to zero below pivot of first column:
+Multiplier L21 = -1 / 2 = -1/2. Insert -1/2 into L and subtract (-1/2)R1 from R2 in U : (R2 - (-1/2)R1)
+[[1, 0, 0, |, 2, -1, 0], [-1/2, 1, 0, |, 0, 3/2, -1], [0, 0, 1, |, 0, -1, 2]]
+
+Eliminate entries to zero below pivot of second column:
+Multiplier L32 = -1 / (3/2) = -2/3. Insert -2/3 into L and subtract (-2/3)R2 from R3 in U : (R3 - (-2/3)R2)
+[[1, 0, 0, |, 2, -1, 0], [-1/2, 1, 0, |, 0, 3/2, -1], [0, -2/3, 1, |, 0, 0, 4/3]]
+
+Now we extract our fully formed L and U matrices:
+L = [[1, 0, 0], [-1/2, 1, 0], [0, -2/3, 1]], U = [[2, -1, 0], [0, 3/2, -1], [0, 0, 4/3]]
+
+Now, we solve the lower triangular system Lc = b using forward substitution.
+[[1, 0, 0], [-1/2, 1, 0], [0, -2/3, 1]] [[c_1], [c_2], [c_3]] = [[2], [2], [2]]
+
+Solving the equations from top to bottom:
+c_1 = 2
+-1/2 c_1 + c_2 = 2 => c_2 = 2 + 1/2(2) = 2 + 1 = 3
+-2/3 c_2 + c_3 = 2 => c_3 = 2 + 2/3(3) = 2 + 2 = 4
+
+Our intermediate vector is c = [[2], [3], [4]].
+
+Finally, we solve the upper triangular system Uh = c using back substitution.
+[[2, -1, 0], [0, 3/2, -1], [0, 0, 4/3]] [[h_1], [h_2], [h_3]] = [[2], [3], [4]]
+
+Solving the equations from bottom to top:
+4/3 h_3 = 4 => h_3 = 4 * 3/4 = 3
+3/2 h_2 - h_3 = 3 => 3/2 h_2 - 3 = 3 => 3/2 h_2 = 6 => h_2 = 4
+2 h_1 - h_2 = 2 => 2 h_1 - 4 = 2 => 2 h_1 = 6 => h_1 = 3
+
+The complete solution vector representing the approximate hydraulic heads in the aquifer is:
+h = [[3], [4], [3]] meters
+
+Similar to the previous thermal problem, this reveals a symmetric distribution. Because the recharge rate is constant and the water level is locked at 0 meters at both ends by the adjacent lakes, the groundwater head naturally forms a parabolic mound, cresting exactly in the center of the aquifer at 4 meters.

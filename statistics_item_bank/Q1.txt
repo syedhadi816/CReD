@@ -1,0 +1,27 @@
+Question: Look at this set of 10 numbers: 24, 73, 73, 67, 67, 98, 98, 57, 67, 45. How would the mode change if the number 73 replaced one of the 67's in the set?
+What is the mode?
+The mode is the number that appears most often in a data set.
+Steps to Find the Mode:
+	1	Arrange numbers from least to greatest to make them easier to count.
+	2	Count occurrences — determine how many times each number appears.
+	3	Identify the highest frequency — the number that appears most often is the mode.
+What is the current mode?
+Let's rearrange the numbers from least to greatest:
+24, 45, 57, 67, 67, 67, 73, 73, 98, 98
+Now let's count how many times each number appears:
+	•	24 → appears 1 time
+	•	45 → appears 1 time
+	•	57 → appears 1 time
+	•	67 → appears 3 times
+	•	73 → appears 2 times
+	•	98 → appears 2 times
+The current mode is 67 — it appears the most.
+What happens if 73 replaces one of the 67's?
+The new data set would be:
+24, 45, 57, 67, 67, 73, 73, 73, 98, 98
+Now let's recount:
+	•	67 → appears 2 times
+	•	73 → appears 3 times
+Now 73 appears the most, making it the new mode.
+Conclusion:
+The mode would increase from 67 to 73.

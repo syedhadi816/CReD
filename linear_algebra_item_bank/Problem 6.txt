@@ -1,0 +1,113 @@
+Problem 6
+(I)
+[Chapter 6, Section 6.2]
+A bridge support system is modeled by the 2 x 2 stiffness matrix
+
+K = [[6, -2], [-2, 4]]
+
+where K maps displacement vectors x = [[x1], [x2]] to restoring forces f = Kx. Determine whether K is positive definite. Then compute the potential energy function U(x) = 1/2 x^T K x and find its minimum point. Finally, perform a singular value decomposition (SVD) of K to identify the directions corresponding to the largest and smallest singular values.
+
+Solution:
+First of all, we have to determine whether the matrix K is positive definite. To do this, we can use Sylvester’s criterion, which checks if all the upper-left leading principal minors (determinants) are strictly positive.
+[Section 6.2 (Tests for Positive Definiteness) -> Section 4.2 (Properties of the Determinant)]
+
+For our 2 x 2 matrix, we check the 1 x 1 determinant (D1) and the 2 x 2 determinant (D2):
+D1 = 6
+D2 = det(K) = (6)(4) - (-2)(-2) = 24 - 4 = 20
+
+Since D1 = 6 > 0 and D2 = 20 > 0, both principal minors are positive. Hence, the stiffness matrix K is positive definite.
+
+Next, we are asked to compute the potential energy function U(x) = 1/2 x^T K x. We substitute our matrix and vectors into the formula:
+[Section 6.1 (Minima, Maxima, and Saddle Points) -> Section 1.4 (Matrix Notation and Matrix Multiplication)]
+
+U(x) = 1/2 [[x1, x2]] [[6, -2], [-2, 4]] [[x1], [x2]]
+
+First, multiply the matrix by the column vector:
+U(x) = 1/2 [[x1, x2]] [[6x1 - 2x2], [-2x1 + 4x2]]
+
+Then, compute the dot product:
+U(x) = 1/2 (x1(6x1 - 2x2) + x2(-2x1 + 4x2))
+U(x) = 1/2 (6x1^2 - 2x1x2 - 2x1x2 + 4x2^2) = 1/2 (6x1^2 - 4x1x2 + 4x2^2)
+U(x) = 3x1^2 - 2x1x2 + 2x2^2
+
+Now, we must find the minimum point of U(x). Because we proved earlier that K is positive definite, the potential energy function forms an upward-opening, bowl-shaped paraboloid. For any pure quadratic form with a positive definite matrix, the absolute minimum rests exactly at the origin. The minimum point is x = [[0], [0]], where U(0) = 0. Physically, this represents the bridge system at its un-displaced, natural resting equilibrium.
+
+Finally, we perform a singular value decomposition (SVD) of K. For any symmetric, positive definite matrix, its SVD (K = U Sigma V^T) is mathematically identical to its eigendecomposition (K = Q Lambda Q^T). Thus, the singular values sigma are exactly the eigenvalues lambda, and the singular directions are the eigenvectors.
+[Section 6.3 (Singular Value Decomposition) -> Section 5.1 (Introduction to Eigenvalues)]
+
+We solve the characteristic equation det(K - lambda I) = 0:
+det [[6-lambda, -2], [-2, 4-lambda]] = (6-lambda)(4-lambda) - 4 = 0
+24 - 10lambda + lambda^2 - 4 = 0 => lambda^2 - 10lambda + 20 = 0
+
+Using the quadratic formula:
+lambda = (10 +/- sqrt(100 - 80)) / 2 = (10 +/- sqrt(20)) / 2 = 5 +/- sqrt(5)
+
+Our singular values are sigma_1 = 5 + sqrt(5) (largest) and sigma_2 = 5 - sqrt(5) (smallest).
+
+To find the directions, we find the eigenvectors for each lambda:
+For sigma_1 = 5 + sqrt(5):
+[[6 - (5+sqrt(5)), -2], [-2, 4 - (5+sqrt(5))]] [[x1], [x2]] = [[0], [0]]
+(1 - sqrt(5))x1 - 2x2 = 0 => 2x2 = (1 - sqrt(5))x1
+
+Let x1 = 2, then x2 = 1 - sqrt(5). The direction of the largest singular value is v1 = [[2], [1-sqrt(5)]].
+
+For sigma_2 = 5 - sqrt(5):
+[[6 - (5-sqrt(5)), -2], [-2, 4 - (5-sqrt(5))]] [[x1], [x2]] = [[0], [0]]
+(1 + sqrt(5))x1 - 2x2 = 0 => 2x2 = (1 + sqrt(5))x1
+
+Let x1 = 2, then x2 = 1 + sqrt(5). The direction of the smallest singular value is v2 = [[2], [1+sqrt(5)]].
+
+(II)
+[Chapter 6, Section 6.2]
+A machine learning engineer is analyzing the error surface of a neural network model with two weight parameters. The curvature of the error surface around a critical point is defined by the Hessian matrix
+
+H = [[5, 4], [4, 5]]
+
+where H maps weight adjustments w = [[w1], [w2]] to gradient changes. Determine whether H is positive definite. Then compute the cost function J(w) = 1/2 w^T H w and find its minimum point. Finally, perform a singular value decomposition (SVD) of H to identify the directions corresponding to the steepest and shallowest curvature (largest and smallest singular values).
+
+Solution:
+First of all, we have to determine whether the Hessian matrix H is positive definite. To do this, we can use Sylvester’s criterion, which checks if all the upper-left leading principal minors (determinants) are strictly positive.
+[Section 6.2 (Tests for Positive Definiteness) -> Section 4.2 (Properties of the Determinant)]
+
+For our 2 x 2 matrix, we check the 1 x 1 determinant (D1) and the 2 x 2 determinant (D2):
+D1 = 5
+D2 = det(H) = (5)(5) - (4)(4) = 25 - 16 = 9
+
+Since D1 = 5 > 0 and D2 = 9 > 0, both principal minors are positive. Hence, the Hessian matrix H is strictly positive definite.
+
+Next, we are asked to compute the cost function J(w) = 1/2 w^T H w. We substitute our matrix and vectors into the formula:
+[Section 6.1 (Minima, Maxima, and Saddle Points) -> Section 1.4 (Matrix Notation and Matrix Multiplication)]
+
+J(w) = 1/2 [[w1, w2]] [[5, 4], [4, 5]] [[w1], [w2]]
+
+First, multiply the matrix by the column vector:
+J(w) = 1/2 [[w1, w2]] [[5w1 + 4w2], [4w1 + 5w2]]
+
+Then, compute the dot product:
+J(w) = 1/2 (w1(5w1 + 4w2) + w2(4w1 + 5w2))
+J(w) = 1/2 (5w1^2 + 4w1w2 + 4w1w2 + 5w2^2) = 1/2 (5w1^2 + 8w1w2 + 5w2^2)
+J(w) = 2.5w1^2 + 4w1w2 + 2.5w2^2
+
+Now, we must find the minimum point of J(w). Because we proved earlier that H is positive definite, the cost function forms an upward-opening, bowl-shaped paraboloid. For any pure quadratic form with a positive definite matrix, the absolute minimum rests exactly at the origin. The minimum point is w = [[0], [0]], where J(0) = 0. In machine learning terms, this indicates that the current critical point is a true local minimum, and no weight adjustments are currently needed.
+
+Finally, we perform a singular value decomposition (SVD) of H. For any symmetric, positive definite matrix, its SVD (H = U Sigma V^T) is mathematically identical to its eigen decomposition (H = Q Lambda Q^T). Thus, the singular values sigma are exactly the eigenvalues lambda, and the singular directions are the eigenvectors.
+[Section 6.3 (Singular Value Decomposition) -> Section 5.1 (Introduction to Eigenvalues)]
+
+We solve the characteristic equation det(H - lambda I) = 0:
+det [[5-lambda, 4], [4, 5-lambda]] = (5-lambda)^2 - 16 = 0
+(5-lambda)^2 = 16 => 5-lambda = +/- 4
+
+Our singular values are sigma_1 = 5 + 4 = 9 (largest) and sigma_2 = 5 - 4 = 1 (smallest).
+
+To find the directions, we find the eigenvectors for each lambda:
+For sigma_1 = 9:
+[[5-9, 4], [4, 5-9]] [[w1], [w2]] = [[-4, 4], [4, -4]] [[w1], [w2]] = [[0], [0]]
+-4w1 + 4w2 = 0 => w1 = w2
+
+Let w1 = 1, then w2 = 1. The direction of steepest curvature (largest singular value) is v1 = [[1], [1]].
+
+For sigma_2 = 1:
+[[5-1, 4], [4, 5-1]] [[w1], [w2]] = [[4, 4], [4, 4]] [[w1], [w2]] = [[0], [0]]
+4w1 + 4w2 = 0 => w1 = -w2
+
+Let w1 = 1, then w2 = -1. The direction of shallowest curvature (smallest singular value) is v2 = [[1], [-1]].

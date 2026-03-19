@@ -1,0 +1,97 @@
+Problem 4
+(I)
+[Chapter 5, Section 5.1]
+A simple recommendation system tracks two types of user engagement on a platform: content viewing and content sharing. The way engagement evolves from one day to the next is modeled by the transformation
+
+A = [[2, 1], [1, 2]]
+
+where the state vector represents current levels of viewing and sharing. Determine the eigenvalues and eigenvectors of A, and explain what these eigenvectors represent in terms of stable patterns of user engagement over time.
+
+Solution:
+First of all, we have to find the eigenvalues of the matrix A. To do this, we use the characteristic equation det(A - lambda I) = 0, where lambda represents the eigenvalues and I is the identity matrix.
+[Section 5.1 (Introduction) -> Section 4.2 (Properties of the Determinant)]
+
+Now, we’ll set up the matrix (A - lambda I):
+A - lambda I = [[2, 1], [1, 2]] - [[lambda, 0], [0, lambda]] = [[2-lambda, 1], [1, 2-lambda]]
+
+Next, we calculate the determinant and set it to zero:
+(2-lambda)(2-lambda) - (1)(1) = 0
+(4 - 4lambda + lambda^2) - 1 = 0
+lambda^2 - 4lambda + 3 = 0
+
+Solving the quadratic equation we get:
+(lambda - 3)(lambda - 1) = 0
+
+Hence, our eigenvalues are lambda_1 = 3 and lambda_2 = 1.
+
+Now, we have to find the eigenvectors corresponding to each eigenvalue by solving the nullspace equation (A - lambda I)x = 0.
+[Section 5.1 (Introduction) -> Section 2.2 (Solving for Ax = 0 and Ax = b)]
+
+For lambda_1 = 3:
+[[2-3, 1], [1, 2-3]] [[x1], [x2]] = [[0], [0]]
+[[-1, 1], [1, -1]] [[x1], [x2]] = [[0], [0]]
+
+This gives us the equation -x1 + x2 = 0 => x1 = x2.
+Let x1 = 1, then x2 = 1.
+Our first eigenvector is v1 = [[1], [1]].
+
+For lambda_2 = 1:
+[[2-1, 1], [1, 2-1]] [[x1], [x2]] = [[0], [0]]
+[[1, 1], [1, 1]] [[x1], [x2]] = [[0], [0]]
+
+This gives us the equation x1 + x2 = 0 => x1 = -x2.
+Let x1 = 1, then x2 = -1.
+Our second eigenvector is v2 = [[1], [-1]].
+
+Finally, we interpret what these eigenvectors represent in terms of stable patterns of user engagement.
+The eigenvectors represent the "stable states" of the platform where the ratio of viewing to sharing doesn't change from day to day.
+The eigenvector v1 = [[1], [1]] represents a highly viral, balanced pattern where users view and share content equally; this pattern grows rapidly, tripling each day (lambda_1 = 3).
+The eigenvector v2 = [[1], [-1]] represents a perfectly imbalanced pattern (e.g., viewing without sharing). Because its eigenvalue is lambda_2 = 1, this specific pattern remains stagnant, neither growing nor decaying over time.
+
+(II)
+[Chapter 5, Section 5.1]
+A quantitative investment firm models the daily capital flow and growth between two correlated asset portfolios: Equities and Commodities. The way capital evolves from one day to the next is modeled by the transformation
+
+A = [[3, 1], [1, 3]]
+
+where the state vector represents the current capital (in millions of dollars) allocated to Equities and Commodities. Determine the eigenvalues and eigenvectors of A, and explain what these eigenvectors represent in terms of stable investment patterns over time.
+
+Solution:
+First of all, we have to find the eigenvalues of the matrix A. To do this, we use the characteristic equation det(A - lambda I) = 0, where lambda represents the eigenvalues and I is the identity matrix.
+[Section 5.1 (Introduction) -> Section 4.2 (Properties of the Determinant)]
+
+Now, we’ll set up the matrix (A - lambda I):
+A - lambda I = [[3, 1], [1, 3]] - [[lambda, 0], [0, lambda]] = [[3-lambda, 1], [1, 3-lambda]]
+
+Next, we calculate the determinant and set it to zero:
+(3-lambda)(3-lambda) - (1)(1) = 0
+(9 - 6lambda + lambda^2) - 1 = 0
+lambda^2 - 6lambda + 8 = 0
+
+Solving the quadratic equation we get:
+(lambda - 4)(lambda - 2) = 0
+
+Hence, our eigenvalues are lambda_1 = 4 and lambda_2 = 2.
+
+Now, we have to find the eigenvectors corresponding to each eigenvalue by solving the nullspace equation (A - lambda I)x = 0.
+[Section 5.1 (Introduction) -> Section 2.2 (Solving for Ax = 0 and Ax = b)]
+
+For lambda_1 = 4:
+[[3-4, 1], [1, 3-4]] [[x1], [x2]] = [[0], [0]]
+[[-1, 1], [1, -1]] [[x1], [x2]] = [[0], [0]]
+
+This gives us the equation -x1 + x2 = 0 => x1 = x2.
+Let x1 = 1, then x2 = 1.
+Our first eigenvector is v1 = [[1], [1]].
+
+For lambda_2 = 2:
+[[3-2, 1], [1, 3-2]] [[x1], [x2]] = [[0], [0]]
+[[1, 1], [1, 1]] [[x1], [x2]] = [[0], [0]]
+
+This gives us the equation x1 + x2 = 0 => x1 = -x2.
+Let x1 = 1, then x2 = -1.
+Our second eigenvector is v2 = [[1], [-1]].
+
+The eigenvectors represent the "stable portfolios" where the mathematical ratio of Equities to Commodities stays perfectly constant day-to-day.
+The eigenvector v1 = [[1], [1]] represents a perfectly balanced portfolio (equal capital in both assets). This equilibrium state yields the highest synergistic growth, multiplying the total capital by a factor of lambda_1 = 4 each day.
+The eigenvector v2 = [[1], [-1]] represents an inversely correlated portfolio (e.g., longing Equities while shorting Commodities with equal capital). This opposing pattern still grows, but at a much slower, stable factor of lambda_2 = 2.

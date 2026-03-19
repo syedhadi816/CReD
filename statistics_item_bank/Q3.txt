@@ -1,0 +1,20 @@
+Question: Look at this set of 5 numbers: 64, 43, 47, 93, 74 How would the median change if the number 90 were added to the set?
+How is median calculated?
+Steps to Find the Median:
+	1	Order the data from least to greatest.
+	2	Count how many numbers are in the set.
+	3	Find the middle value. If there's an odd count, the median is the middle number. If there's an even count, the median is the average of the two middle numbers.
+What is the current median?
+Let's rearrange the 5 numbers from least to greatest:
+43, 47, 64, 74, 93
+Since there are 5 numbers (odd), the median is simply the middle value — the 3rd number:
+The current median is 64.
+What happens when we add 90 to the set?
+Now we have 6 numbers. Let's rearrange:
+43, 47, 64, 74, 90, 93
+Since there are 6 numbers (even), we take the average of the two middle values — the 3rd and 4th numbers:
+64 + 74 = 138
+138 ÷ 2 = 69
+The new median is 69.
+Conclusion:
+The median would increase from 64 to 69. This happened because adding 90 (a high number) shifted the middle of the data set upward.

@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String
+  createdAt DateTime @default(now())
+
+  sessions  AssessmentSession[]
+  messages  ChatMessage[]
+}
+
+model AccessCode {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  email     String?
+  maxUses   Int      @default(1)
+  usedCount Int      @default(0)
+  expiresAt DateTime?
+  notes     String?
+}
+
+model AssessmentSession {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  topic     String
+  startedAt DateTime @default(now())
+  endedAt   DateTime?
+
+  questionAttempts QuestionAttempt[]
+  chatMessages     ChatMessage[]
+}
+
+enum QuestionType {
+  MCQ
+  FREE_FORM
+}
+
+model Question {
+  id          String       @id @default(cuid())
+  topic       String
+  prompt      String
+  finalAnswer String
+  difficulty  String?
+
+  // MCQ vs free-form. For MCQ, use optionsJson + correctOptionIndex.
+  type              QuestionType @default(FREE_FORM)
+  optionsJson       Json?
+  correctOptionIndex Int?
+
+  stepsJson Json
+
+  attempts QuestionAttempt[]
+  messages ChatMessage[]
+}
+
+model QuestionAttempt {
+  id              String             @id @default(cuid())
+  session         AssessmentSession  @relation(fields: [sessionId], references: [id])
+  sessionId       String
+  question        Question           @relation(fields: [questionId], references: [id])
+  questionId      String
+  startedAt       DateTime           @default(now())
+  completedAt     DateTime?
+  finalCorrect    Boolean?
+  finalAnswerText String?
+
+  stepAttempts StepAttempt[]
+}
+
+model StepAttempt {
+  id                String          @id @default(cuid())
+  questionAttempt   QuestionAttempt @relation(fields: [questionAttemptId], references: [id])
+  questionAttemptId String
+  stepIndex         Int
+  answerText        String?
+  correct           Boolean?
+  createdAt         DateTime        @default(now())
+}
+
+model ChatMessage {
+  id          String             @id @default(cuid())
+  session     AssessmentSession  @relation(fields: [sessionId], references: [id])
+  sessionId   String
+  user        User               @relation(fields: [userId], references: [id])
+  userId      String
+  question    Question?          @relation(fields: [questionId], references: [id])
+  questionId  String?
+  stepIndex   Int?
+  role        String
+  content     String
+  createdAt   DateTime           @default(now())
+}

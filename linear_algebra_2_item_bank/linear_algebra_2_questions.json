@@ -1,0 +1,254 @@
+{
+  "questions": [
+    {
+      "id": "LA-Q1",
+      "prompt": "A **1-meter metal bar** is heated along its length. At steady state, the temperature $u(x)$ along the bar (where $x$ is position in meters, $0 \\le x \\le 1$) satisfies\n\n$$-\\frac{d^2 u}{dx^2} = f(x),$$\n\nwhere $f(x)$ describes how much heat is added along the bar. The **ends are held at $0^\\circ$C**, so $u(0)=u(1)=0$.\n\nAn engineer places **five equally spaced sensors inside** the bar (not at the ends), uses step size $h=1/6$, and assumes **constant** heating $f(x)=36$. That leads to a linear system $A\\mathbf{u}=\\mathbf{b}$ with $\\mathbf{b}=[1,1,1,1,1]^{\\top}$. After solving for the approximate temperatures at the five interior points, **what is the temperature at the center interior sensor, $u_3$?**",
+      "type": "MCQ",
+      "options": [
+        "$4.5$ °C",
+        "$2.5$ °C",
+        "$5.0$ °C",
+        "$3.0$ °C"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Classic 1D heat model on a rod: second derivative of temperature relates to heat source; boundaries fixed at zero. Interior unknowns come from a finite-difference stencil that builds a tridiagonal system.",
+        "nodes": [
+          {
+            "id": "setup",
+            "title": "What is being modeled",
+            "reference": "Five interior samples mean six segments along the bar, so $h=1/6$. Boundaries $u_0=u_6=0$ are known; the five unknowns are temperatures in between."
+          },
+          {
+            "id": "stencil",
+            "title": "From PDE to linear equations",
+            "reference": "Approximate $u''$ with second differences; each interior row ties a point to its neighbors. With $f=36$ and $h^2=1/36$, the right-hand side becomes $1$ at each interior equation."
+          },
+          {
+            "id": "solve",
+            "title": "After solving",
+            "reference": "The physical picture is symmetric: same heating, cold ends, so the hottest spot should be near the middle. The center interior value is the maximum among the five."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q2",
+      "prompt": "Three **machine mounts** use different spring layouts. Each mount’s stiffness is a $2\\times 2$ positive definite matrix $K$: it tells how strongly the mount resists motion in two directions.\n\nThe **condition number** $\\kappa = \\lambda_{\\max}/\\lambda_{\\min}$ compares stiffness in the stiffest vs. softest direction. A **much larger $\\kappa$** means the mount is very uneven—small errors in applied force can produce **very uneven** motion, so the system is **more sensitive**.\n\nHere are the three stiffness matrices:\n\n$$K_1 = \\begin{pmatrix} 100 & 0 \\\\ 0 & 2 \\end{pmatrix},\\quad K_2 = \\begin{pmatrix} 2 & 1 \\\\ 1 & 2 \\end{pmatrix},\\quad K_3 = \\begin{pmatrix} 3 & 1 \\\\ 1 & 1 \\end{pmatrix}.$$\n\nTheir condition numbers are $\\kappa_1 = 50$, $\\kappa_2 = 3$, and $\\kappa_3 \\approx 5.828$. **Which mount is the most sensitive** to uneven applied forces (largest $\\kappa$)?",
+      "type": "MCQ",
+      "options": [
+        "The system with $K_1$",
+        "The system with $K_2$",
+        "The system with $K_3$",
+        "All three are equally sensitive"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Eigenvalues of a symmetric positive definite $K$ are the principal stiffnesses; condition number is their ratio. Bigger ratio means more directional imbalance.",
+        "nodes": [
+          {
+            "id": "diagonal",
+            "title": "Mount 1",
+            "reference": "$K_1$ is diagonal: eigenvalues are $100$ and $2$, so $\\kappa_1=50$—one direction is fifty times stiffer than the other."
+          },
+          {
+            "id": "other-two",
+            "title": "Mounts 2 and 3",
+            "reference": "Solve $\\det(K-\\lambda I)=0$ for $K_2$ and $K_3$ to get eigenvalues, then form $\\kappa$. Both are much smaller than $50$."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q3",
+      "prompt": "A **phone camera** reads two raw sensor channels, $x_1$ and $x_2$. The imaging chip turns them into two outputs: **brightness** (first) and **color balance** (second). Each output is a **linear mix** of the raw channels.\n\nWith the mixing matrix below, the transformation is $\\mathbf{y} = A\\mathbf{x}$ where $\\mathbf{x}=[x_1,x_2]^{\\top}$:\n\n$$A = \\begin{pmatrix} 0.6 & 0.4 \\\\ 0.2 & 0.8 \\end{pmatrix}.$$\n\n(First row = how brightness depends on channels; second row = color balance.)\n\nFor a particular shot, $\\mathbf{x}=[5,3]^{\\top}$. **What is the brightness** (the first component of $\\mathbf{y}$)?",
+      "type": "MCQ",
+      "options": [
+        "$4.2$",
+        "$3.4$",
+        "$3.0$",
+        "$5.0$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Matrix–vector multiply: first row of $A$ dotted with $\\mathbf{x}$ gives the first output.",
+        "nodes": [
+          {
+            "id": "multiply",
+            "title": "Compute brightness",
+            "reference": "Brightness $= 0.6(5)+0.4(3)$."
+          },
+          {
+            "id": "context",
+            "title": "Big picture",
+            "reference": "$A$ is invertible here, so you could recover raw channels from processed outputs in principle; column space is all of $\\mathbb{R}^2$."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q4",
+      "prompt": "A simple **campus app** model tracks daily **views** and **shares**. If today’s counts are written as a column vector, tomorrow’s predicted counts are obtained by multiplying by a fixed matrix $A$:\n\n$$A = \\begin{pmatrix} 2 & 1 \\\\ 1 & 2 \\end{pmatrix}.$$\n\nThe **eigenvalues** of $A$ describe how certain special “patterns” of views vs. shares grow or stay steady over time. **What are the eigenvalues $\\lambda$ of $A$?**",
+      "type": "MCQ",
+      "options": [
+        "$\\lambda = 1$ and $\\lambda = 3$",
+        "$\\lambda = 2$ and $\\lambda = 2$",
+        "$\\lambda = -1$ and $\\lambda = 5$",
+        "$\\lambda = 0$ and $\\lambda = 4$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Solve $\\det(A-\\lambda I)=0$ for a $2\\times 2$ matrix.",
+        "nodes": [
+          {
+            "id": "char",
+            "title": "Characteristic polynomial",
+            "reference": "$(2-\\lambda)^2-1=0$ leads to $\\lambda^2-4\\lambda+3=0$."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q5",
+      "prompt": "Two **subway stations** share riders. Let $\\mathbf{x}_k$ be the vector of passenger counts at the two stations **after $k$ days**. A planning model says **each day’s counts** are obtained from the previous day by\n\n$$\\mathbf{x}_{k+1} = A\\mathbf{x}_k,\\quad A = \\begin{pmatrix} 4 & 1 \\\\ 2 & 3 \\end{pmatrix}.$$\n\nToday (day $0$) the counts are $\\mathbf{x}_0=[10,5]^{\\top}$. Using diagonalization $A=PDP^{-1}$ with eigenvalues $5$ and $2$, **what is the number of passengers at station A**—the **first entry of $\\mathbf{x}_3$**—after **three** days?",
+      "type": "MCQ",
+      "options": [
+        "$1055$",
+        "$1015$",
+        "$3125$",
+        "$3165$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "$\\mathbf{x}_k = A^k\\mathbf{x}_0 = PD^kP^{-1}\\mathbf{x}_0$ when $A$ is diagonalizable.",
+        "nodes": [
+          {
+            "id": "eigen",
+            "title": "Eigenvalues and $P$",
+            "reference": "Eigenvalues $5$ and $2$; build $P$ from eigenvectors, compute $P^{-1}$, then apply $D^3$."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q6",
+      "prompt": "A **bridge joint** is modeled so that elastic energy depends on a small displacement vector $\\mathbf{x}$ through a **stiffness matrix** $K$:\n\n$$K = \\begin{pmatrix} 6 & -2 \\\\ -2 & 4 \\end{pmatrix}.$$\n\nEngineers want to know if $K$ is **positive definite** (energy is a “bowl” opening upward, stable equilibrium at $\\mathbf{0}$). Using **Sylvester’s criterion**—check that **every leading principal minor** is **positive**—**is $K$ positive definite?**",
+      "type": "MCQ",
+      "options": [
+        "Yes — both leading minors are positive",
+        "No — the matrix is indefinite",
+        "No — the matrix is positive semidefinite only",
+        "Yes — but only because $\\det(K) = 0$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "For $2\\times 2$ symmetric $K$: first minor is top-left entry; second is $\\det(K)$. Both must be $>0$ for positive definite.",
+        "nodes": [
+          {
+            "id": "minors",
+            "title": "Check the numbers",
+            "reference": "$6>0$ and $\\det(K)=6\\cdot 4-(-2)(-2)=20>0$."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q7",
+      "prompt": "A **water network** with three linked reservoirs is adjusted using three control variables $(x_1,x_2,x_3)$. Conservation and pump rules give this linear system for the **net adjustments** that must hold simultaneously:\n\n$$\\begin{aligned} 4x_1+2x_2+x_3 &= 7 \\\\ 6x_1+7x_2+3x_3 &= 18 \\\\ 2x_1+x_2+5x_3 &= 12 \\end{aligned}$$\n\nYou solve it by **LU factorization**: factor $A=LU$, solve $L\\mathbf{c}=\\mathbf{b}$, then $U\\mathbf{x}=\\mathbf{c}$. **What is $x_3$?**",
+      "type": "MCQ",
+      "options": [
+        "$17/9$",
+        "$25/36$",
+        "$7/6$",
+        "$8.5$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Standard $LU$ workflow on $A\\mathbf{x}=\\mathbf{b}$: forward substitution on $L$, then back substitution on $U$.",
+        "nodes": [
+          {
+            "id": "structure",
+            "title": "What to expect",
+            "reference": "Last equation in $U$ determines $x_3$ first in back substitution."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q8",
+      "prompt": "A **sensor network** has $n$ nodes. Each node’s correction $x_i$ is linked to measurements $b_i$ by $A\\mathbf{x}=\\mathbf{b}$, where $A$ is the $n\\times n$ matrix with **$n$ on the diagonal** and **$-1$ everywhere off the diagonal** (each node resists changing on its own but is pulled toward neighbors).\n\nSomeone guesses that $A^{-1}$ has a **simple pattern**: on the diagonal a constant $c$, off the diagonal all $1$s, and the **whole matrix** scaled by $\\dfrac{1}{n+1}$. **What value of $c$ makes $AA^{-1}=I$?** (Hint: look at one **off-diagonal** entry of the product.)",
+      "type": "MCQ",
+      "options": [
+        "$c = 2$",
+        "$c = n$",
+        "$c = n - 1$",
+        "$c = 0$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Multiply row 1 of $A$ by column 2 of the proposed $A^{-1}$ (ignoring the overall $1/(n+1)$ scale first, then enforce zero).",
+        "nodes": [
+          {
+            "id": "dot",
+            "title": "Off-diagonal entry",
+            "reference": "You get a linear equation in $c$ involving $n$ and the count of $-1$ terms; solving gives $c=2$."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q9",
+      "prompt": "A **bakery** blends four ingredient mixes (in kg) $x_1,x_2,x_3,x_4$ to hit targets for three products. The requirements form $A\\mathbf{x}=\\mathbf{b}$ with\n\n$$A = \\begin{pmatrix} 1 & 2 & 3 & 2 \\\\ 2 & 3 & 5 & 4 \\\\ 1 & 1 & 2 & 1 \\end{pmatrix},\\quad \\mathbf{b} = \\begin{pmatrix} 5 \\\\ 8 \\\\ 3 \\end{pmatrix}.$$\n\nYou row-reduce the **augmented matrix** $[A\\,|\\,\\mathbf{b}]$ to echelon form. **Which variable is free** (does **not** correspond to a pivot column)?",
+      "type": "MCQ",
+      "options": [
+        "$x_3$",
+        "$x_1$",
+        "$x_2$",
+        "$x_4$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Pivot columns identify basic variables; a non-pivot column means that variable is free. Three equations, four unknowns, full row rank $\\Rightarrow$ one free variable.",
+        "nodes": [
+          {
+            "id": "rref",
+            "title": "After elimination",
+            "reference": "Typical outcome: pivots in columns 1, 2, and 4; column 3 has no pivot, so $x_3$ is free."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "LA-Q10",
+      "prompt": "A **delivery van**’s fuel use $y$ (liters) is recorded at several distances $x$ (km). You fit a **straight line** $y = c + dx$ to the data. The points are $(10,3)$, $(20,5)$, $(30,7)$, and $(40,8)$—not perfectly on a line, so you use **least squares**.\n\nSet up $A\\mathbf{z}=\\mathbf{b}$ with $\\mathbf{z}=[c,d]^{\\top}$ and solve the **normal equations** $A^{\\top}A\\mathbf{z}=A^{\\top}\\mathbf{b}$. **What is the best-fit slope $d$** (liters per extra km)?",
+      "type": "MCQ",
+      "options": [
+        "$0.17$",
+        "$0.15$",
+        "$0.20$",
+        "$0.25$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Each data point gives one row $[1, x_i]$ in $A$; $\\mathbf{b}$ holds observed $y_i$. Normal equations yield a $2\\times 2$ system for $c$ and $d$.",
+        "nodes": [
+          {
+            "id": "interpret",
+            "title": "Meaning of $d$",
+            "reference": "$d$ estimates extra liters burned per additional kilometer."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    }
+  ]
+}

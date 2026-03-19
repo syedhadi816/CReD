@@ -1,0 +1,189 @@
+{
+  "questions": [
+    {
+      "id": "Q1",
+      "prompt": "Look at this set of 10 numbers: 24, 73, 73, 67, 67, 98, 98, 57, 67, 45. How would the mode change if the number 73 replaced one of the 67's in the set?",
+      "type": "MCQ",
+      "options": ["The mode would change from 67 to 73",
+    "The mode would change from 73 to 67",
+    "The mode would remain 67",
+    "The set would have no mode"],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "This question asks how the mode of a data set changes when one value is replaced. The student must first find the current mode (the value that appears most often), then apply the replacement and find the new mode.\nLearning goal: Understand what the mode is and how it can change when the data set changes.\nKey concepts: mode, frequency, most frequent value, data set\nStrategy: First find the current mode by ordering the data and counting frequencies. Then apply the replacement to get the new set, recount frequencies, and identify the new mode. Finally compare old vs new mode.",
+        "nodes": [
+          {
+            "id": "arrange-data",
+            "title": "Arrange the data",
+            "reference": "Arrange the numbers from least to greatest so they are easier to count.\nConcept reminder: Ordering the data makes it easier to count how many times each value appears.\nHints:\n- Start by identifying the smallest and largest numbers in the set.\n- List the numbers in order from smallest to largest, using each value as many times as it appears.\n- Check: you should have 10 numbers total. Count them to be sure.\nAfter: Once the list is in order, count how many times each distinct value appears."
+          },
+          {
+            "id": "current-mode",
+            "title": "Find the current mode",
+            "reference": "What is the current mode? (The number that appears most often in the original set.)\nConcept reminder: The mode is the value that appears most often in the data set.\nHints:\n- Look at your ordered list. Which number appears more times than any other?\n- Count how many times each distinct value appears. The mode is the one with the highest count.\n- If two values tie for highest count, the set can have more than one mode; here there is a single highest.\nAfter: Now apply the change: replace one of the 67's with 73, then find the new mode."
+          },
+          {
+            "id": "new-mode",
+            "title": "Find the new mode after the change",
+            "reference": "After replacing one 67 with 73, what is the new mode?\nConcept reminder: After changing the set, recount how many times each value appears; the new mode is again the value with the highest frequency.\nHints:\n- Write the new set: one 67 is replaced by 73. How many 67's and how many 73's are there now?\n- List the new set in order and count each value. Which value appears most often?\n- Compare the counts for 67 and 73 in the new set; the one with the higher count is the mode.\nAfter: Compare the current mode and the new mode to state how the mode changed."
+          },
+          {
+            "id": "conclusion",
+            "title": "State how the mode changed",
+            "reference": "How would the mode change? (e.g. increase, decrease, or stay the same, and from what to what.)\nConcept reminder: Summarize the comparison: old mode vs new mode and whether it went up, down, or stayed the same.\nHints:\n- You have the current mode and the new mode. State both and say whether the mode increased, decreased, or stayed the same.\n- Use a short sentence: 'The mode would ... from ... to ...'."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "Q2",
+      "prompt": "Look at this set of 9 numbers: 32, 62, 64, 51, 35, 84, 12, 70, 40. How would the mean change if the number 50 were added to the set?",
+      "type": "MCQ",
+      "options": [ "The mean would increase from 50 to 55",
+    "The mean would decrease from 50 to 45",
+    "The mean would change from 50 to 52",
+    "The mean would stay the same at 50"],
+      "correctOptionIndex": 3,
+      "llmContext": {
+        "overviewText": "This question asks how the mean of a data set changes when one new number is added. The student must find the current mean (sum ÷ count), then add the new value and recompute the mean.\nLearning goal: Understand how the mean is calculated and how adding a value affects it.\nKey concepts: mean, average, sum, count, data set\nStrategy: Find the current sum and count to get the current mean. Then add the new number to the sum and increase the count by one; divide to get the new mean. Compare.",
+        "nodes": [
+          {
+            "id": "current-sum",
+            "title": "Find the sum of the current set",
+            "reference": "Add all 9 numbers together. What is the sum?\nConcept reminder: The mean is sum divided by count. First we need the total of all the numbers.\nHints:\n- Add the numbers one by one or in pairs. Keep a running total.\n- Check: you have 9 numbers. Make sure you included each one.\n- Double-check your addition; small errors will change the mean.\nAfter: Divide the sum by 9 to get the current mean."
+          },
+          {
+            "id": "current-mean",
+            "title": "Find the current mean",
+            "reference": "What is the current mean? (Sum ÷ number of values.)\nConcept reminder: Mean = sum of all values ÷ how many values there are.\nHints:\n- Take the sum you found and divide by the number of values in the set.\n- Here there are 9 values. So mean = sum ÷ 9.\n- The mean is the average; it can be a decimal.\nAfter: Now add 50 to the set: add it to the sum and increase the count by 1, then find the new mean."
+          },
+          {
+            "id": "new-mean",
+            "title": "Find the new mean after adding 50",
+            "reference": "After adding 50 to the set, what is the new mean?\nConcept reminder: New sum = old sum + 50. New count = 10. New mean = new sum ÷ 10.\nHints:\n- You now have 10 numbers. What is the new sum? (Old sum + 50.)\n- Divide the new sum by 10 to get the new mean.\n- Think about whether adding a number equal to the current mean would pull the average up or down.\nAfter: Compare the current mean and the new mean; state how the mean changed."
+          },
+          {
+            "id": "conclusion",
+            "title": "State how the mean changed",
+            "reference": "How would the mean change? (Increase, decrease, or stay the same?)\nConcept reminder: Summarize: did the mean go up, down, or stay the same? Why?\nHints:\n- You found both means. Are they the same or different?\n- State clearly: 'The mean would not change' or 'The mean would stay at 50.'"
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "Q3",
+      "prompt": "Look at this set of 5 numbers: 64, 43, 47, 93, 74. How would the median change if the number 90 were added to the set?",
+      "type": "MCQ",
+      "options": ["The median would decrease from 64 to 59",
+    "The median would increase from 64 to 69",
+    "The median would stay the same at 64",
+    "The median would increase from 64 to 74"],
+      "correctOptionIndex": 1,
+      "llmContext": {
+        "overviewText": "This question asks how the median of a data set changes when one new number is added. The student must order the data, find the current median (middle value), then add the new value, reorder, and find the new median.\nLearning goal: Understand how the median is found and how adding a value can change the middle of the set.\nKey concepts: median, middle value, ordered data, odd vs even count\nStrategy: Order the data from least to greatest. Find the current median (for odd count, the middle number). Add the new value, reorder, then find the new median (for even count, average of the two middle numbers). Compare.",
+        "nodes": [
+          {
+            "id": "order-current",
+            "title": "Order the current set",
+            "reference": "Arrange the 5 numbers from least to greatest.\nConcept reminder: The median is the middle value when the data is in order, so we must order the set first.\nHints:\n- Identify the smallest and largest of the five numbers.\n- List all five in order from least to greatest.\n- Check: you should have exactly 5 numbers.\nAfter: With 5 numbers (odd), the median is the middle one — the 3rd number in the ordered list."
+          },
+          {
+            "id": "current-median",
+            "title": "Find the current median",
+            "reference": "What is the current median? (The middle value of the ordered set.)\nConcept reminder: For an odd number of values, the median is the one in the middle when ordered.\nHints:\n- With 5 numbers in order, the middle is the 3rd number.\n- Count from the smallest: 1st, 2nd, 3rd (that's the median), 4th, 5th.\n- The median is not the average of all numbers; it's the middle value.\nAfter: Add 90 to the set, then reorder the 6 numbers and find the new median."
+          },
+          {
+            "id": "order-with-90",
+            "title": "Order the set with 90 included",
+            "reference": "After adding 90, arrange all 6 numbers from least to greatest.\nConcept reminder: We now have 6 numbers; put them in order so we can find the middle.\nHints:\n- Include 90 in the list. Where does 90 fall relative to 64, 74, and 93?\n- List all 6 in order from smallest to largest.\n- For 6 numbers, the median will be the average of the 3rd and 4th.\nAfter: With 6 numbers (even), the median is the average of the two middle values — the 3rd and 4th numbers."
+          },
+          {
+            "id": "new-median",
+            "title": "Find the new median",
+            "reference": "What is the new median? (Average of the two middle values.)\nConcept reminder: For an even number of values, the median is the average of the two middle numbers.\nHints:\n- The two middle values are the 3rd and 4th in the ordered list. Add them and divide by 2.\n- 64 and 74 are the two in the middle. (64 + 74) ÷ 2 = ?\n- The median is a single number: the average of those two.\nAfter: Compare the current median and the new median; state how the median changed."
+          },
+          {
+            "id": "conclusion",
+            "title": "State how the median changed",
+            "reference": "How would the median change? (Increase, decrease, or stay the same, and from what to what?)\nConcept reminder: Summarize: old median vs new median and whether it went up, down, or stayed the same.\nHints:\n- You have the current median (64) and the new median. State both and say whether it increased, decreased, or stayed the same.\n- Use a short sentence: 'The median would increase from 64 to 69.'"
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "Q4",
+      "prompt": "Select the outlier in the data set. If the outlier were removed, would the mean increase or decrease? 2, 72, 74, 79, 83, 85, 93, 95, 99",
+      "type": "MCQ",
+      "options": ["The outlier is 99; removing it would decrease the mean",
+    "The outlier is 2; removing it would decrease the mean",
+    "The outlier is 2; removing it would increase the mean",
+    "The outlier is 72; removing it would increase the mean"],
+      "correctOptionIndex": 2,
+      "llmContext": {
+        "overviewText": "This question asks the student to identify the outlier in a data set and then determine whether the mean would increase or decrease if that outlier were removed. The student must find the outlier, compute the current mean, then remove the outlier and compute the new mean.\nLearning goal: Understand what an outlier is and how it affects the mean.\nKey concepts: outlier, mean, sum, count, effect on average\nStrategy: Identify the value that stands out from the rest. Find the current mean (sum ÷ count). Remove the outlier from the set, recompute sum and count, find the new mean. Compare and state whether the mean increases or decreases.",
+        "nodes": [
+          {
+            "id": "identify-outlier",
+            "title": "Identify the outlier",
+            "reference": "Which number in the data set is the outlier? (The one that stands out as unusually high or low.)\nConcept reminder: An outlier is a value that is very different from the rest — much higher or much lower.\nHints:\n- Look at the range of the data. Most values are in one cluster; one may be far away.\n- List the numbers. Are almost all of them in a similar range? Which one is not?\n- The outlier here is much lower than all the others.\nAfter: Now find the current mean of all 9 numbers (including the outlier)."
+          },
+          {
+            "id": "current-mean",
+            "title": "Find the current mean",
+            "reference": "What is the current mean when all 9 numbers are included?\nConcept reminder: Mean = sum of all values ÷ count. Add all 9 numbers, then divide by 9.\nHints:\n- Add all 9 numbers. The sum is 682. Divide 682 by 9.\n- 682 ÷ 9 gives a decimal. Round to one decimal place if needed.\n- The mean is pulled toward the outlier when the outlier is included.\nAfter: Remove the outlier from the set. What is the new sum and count? Then find the new mean."
+          },
+          {
+            "id": "new-mean-without-outlier",
+            "title": "Find the mean without the outlier",
+            "reference": "If the outlier is removed, what is the new mean? (8 numbers remain.)\nConcept reminder: Without the outlier, you have 8 numbers. New sum = old sum minus the outlier. New mean = new sum ÷ 8.\nHints:\n- Remove the outlier from the set. The new sum is 682 − 2 = 680. Divide by 8.\n- 680 ÷ 8 = ? That is the new mean.\n- Removing a very low value usually raises the mean.\nAfter: Compare the current mean and the new mean; state whether the mean would increase or decrease if the outlier were removed."
+          },
+          {
+            "id": "conclusion",
+            "title": "State whether mean increases or decreases",
+            "reference": "If the outlier were removed, would the mean increase or decrease? (And from what to what?)\nConcept reminder: Summarize: current mean vs mean without outlier; state whether it goes up or down and why it makes sense.\nHints:\n- You have the current mean (with outlier) and the new mean (without). Which is larger?\n- State: the mean would increase from 75.8 to 85. The low outlier was pulling the average down."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    },
+    {
+      "id": "Q5",
+      "prompt": "There are 14 dogs at the dog park on a busy Saturday. 2 of them are springer spaniels. What is the probability that a randomly selected dog is a springer spaniel?",
+      "type": "MCQ",
+      "options": ["1/14",
+    "1/2",
+    "1/7",
+    "Both B and C"],
+      "correctOptionIndex": 2,
+      "llmContext": {
+        "overviewText": "This question asks for the probability that a randomly selected dog is a springer spaniel, given the number of springer spaniels and the total number of dogs. The student must identify favorable and total outcomes and express the probability as a fraction, then simplify.\nLearning goal: Understand basic probability as favorable outcomes divided by total outcomes, and simplify the fraction.\nKey concepts: probability, favorable outcomes, total outcomes, fraction, simplify\nStrategy: Identify how many outcomes are favorable (springer spaniels) and how many total outcomes (all dogs). Write the probability as a fraction. Simplify the fraction if possible.",
+        "nodes": [
+          {
+            "id": "favorable-total",
+            "title": "Identify favorable and total outcomes",
+            "reference": "How many favorable outcomes (springer spaniels) and how many total outcomes (all dogs) are there?\nConcept reminder: Probability = favorable outcomes ÷ total outcomes. We need both numbers.\nHints:\n- How many dogs are springer spaniels? That is the favorable count.\n- How many dogs are there in total? That is the total number of outcomes.\n- Favorable = 2, total = 14. Now write the fraction.\nAfter: Write the probability as a fraction: favorable ÷ total."
+          },
+          {
+            "id": "probability-fraction",
+            "title": "Write probability as a fraction",
+            "reference": "What is the probability as a fraction? (P(springer spaniel) = ?)\nConcept reminder: Probability is favorable ÷ total, so P = favorable / total.\nHints:\n- Put the favorable count over the total count: 2 over 14.\n- The fraction 2/14 is correct. You can leave it or simplify.\n- To simplify, find a number that divides both 2 and 14.\nAfter: Simplify the fraction by dividing both numerator and denominator by their greatest common factor."
+          },
+          {
+            "id": "simplify",
+            "title": "Simplify the fraction",
+            "reference": "Simplify 2/14 to lowest terms. What is the probability in simplest form?\nConcept reminder: Simplifying means dividing both top and bottom by the same number until they have no common factor except 1.\nHints:\n- What number divides both 2 and 14? Divide both by 2.\n- 2 ÷ 2 = 1, 14 ÷ 2 = 7. So the simplified fraction is 1/7.\n- In words: 1 in 7, or one out of seven.\nAfter: State the conclusion: the probability that a randomly selected dog is a springer spaniel."
+          },
+          {
+            "id": "conclusion",
+            "title": "State the conclusion",
+            "reference": "What is the probability that a randomly selected dog is a springer spaniel? (Fraction or words.)\nConcept reminder: Final answer: the probability in simplest form, or as '1 in 7'.\nHints:\n- You have the simplified fraction. State it as the final answer.\n- You can say '1/7' or 'there is a 1 in 7 chance'."
+          }
+        ],
+        "note": "This is reference guidance only. It is not a strict rubric."
+      }
+    }
+  ]
+}
