@@ -11,6 +11,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (_req, res) => {
+  res.json({ ok: true, service: "CReD API" });
+});
+
 app.use("/api/auth", authRouter);
 app.use("/api/questions", questionsRouter);
 app.use("/api/chat", chatRouter);
