@@ -32,7 +32,29 @@ Mathematics formatting (required when you write any math):
 - The student UI renders your replies as Markdown with KaTeX.
 - Use LaTeX inside dollar signs: inline math as $...$ (e.g. $x^2$, $\\mathbf{A}$, $\\frac{1}{2}$).
 - Use display (block) equations on their own lines as $$...$$.
-- Use normal LaTeX command syntax (e.g. \\frac, \\sum, Greek letters).`;
+- Use normal LaTeX command syntax (e.g. \\frac, \\sum, Greek letters).
+- Never write a backslash immediately before a plain digit in place of a number (wrong: \\3s — use $3s$ or $3s + 5d = 78$). Keep $...$ pairs balanced.
+- For equations like $3s + 5d = 78$, wrap the whole expression in one pair of $ delimiters; do not split or drop opening $$ for display math.
+- Do not leave stray backslashes at the end of variables or words (wrong: t\\ or r\\). If you need math, write $t$ or $r$ or $dt/dt$ etc.`;
+
+/** Best-effort cleanup for tutor replies so malformed LaTeX/Markdown does not break the UI. */
+function sanitizeTutorReply(text: string): string {
+  if (!text) return text;
+  const lines = text.split(/\r?\n/);
+  const cleaned: string[] = [];
+  for (const line of lines) {
+    let current = line;
+    // Remove stray backslash after a letter when it's not starting a LaTeX command (e.g. "t\" -> "t").
+    current = current.replace(/([A-Za-z])\\(?![A-Za-z])/g, "$1");
+    // If a line has an odd number of $ symbols, drop all of them so it renders as plain text.
+    const dollars = current.match(/\$/g);
+    if (dollars && dollars.length % 2 === 1) {
+      current = current.replace(/\$/g, "");
+    }
+    cleaned.push(current);
+  }
+  return cleaned.join("\n");
+}
 
 /** POST /api/chat/activate — prime the LLM with the guide prompt (no visible response). */
 router.post("/activate", requireAuth, async (req: Request, res: Response) => {
@@ -61,6 +83,10 @@ router.post("/activate", requireAuth, async (req: Request, res: Response) => {
       where: { id: questionId },
     });
     if (!question) {
+      res.status(404).json({ error: "Question not found" });
+      return;
+    }
+    if (question.userId && question.userId !== userId) {
       res.status(404).json({ error: "Question not found" });
       return;
     }
@@ -138,6 +164,10 @@ router.post("/", requireAuth, async (req: Request, res: Response) => {
       res.status(404).json({ error: "Question not found" });
       return;
     }
+    if (question.userId && question.userId !== userId) {
+      res.status(404).json({ error: "Question not found" });
+      return;
+    }
     const answerType =
       question.type === "MCQ"
         ? "This question is multiple choice. The student selects one of a few answer options."
@@ -199,6 +229,8 @@ router.post("/", requireAuth, async (req: Request, res: Response) => {
         "I'm having trouble connecting to the tutor right now. Please check that the LLM provider is configured and reachable.";
     }
 
+    const safeReply = sanitizeTutorReply(reply);
+
     await prisma.chatMessage.create({
       data: {
         sessionId,
@@ -206,7 +238,7 @@ router.post("/", requireAuth, async (req: Request, res: Response) => {
         questionId,
         stepIndex,
         role: "assistant",
-        content: reply,
+        content: safeReply,
       },
     });
 
@@ -214,10 +246,10 @@ router.post("/", requireAuth, async (req: Request, res: Response) => {
       sessionId,
       questionId,
       userId,
-      content: truncateForAudit(reply),
+      content: truncateForAudit(safeReply),
     });
 
-    res.json({ content: reply });
+    res.json({ content: safeReply });
   } catch (e) {
     console.error("Chat error:", e);
     res.status(500).json({ error: "Chat failed" });

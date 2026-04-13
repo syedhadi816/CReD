@@ -5,6 +5,29 @@ import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
 /**
+ * remark-math treats `$...$` as inline math. Dollar amounts like `$215` therefore start
+ * a math span that runs until the next `$`, producing broken KaTeX (often one character per line).
+ * Escape `$` when it clearly starts a **money** amount — but NOT when it is math like `$3s + 5d$`
+ * (digit + variable) or `$3$` (digit closed by next `$`), which our old rule broke.
+ */
+export function escapeCurrencyDollarSigns(text: string): string {
+  return text.replace(/\$(?=\s*[\d,])/g, (marker, offset) => {
+    const afterDollar = text.slice(offset + 1);
+    const rest = afterDollar.replace(/^\s*/, "");
+    const numMatch = rest.match(/^([\d,]+(?:\.\d+)?)/);
+    if (!numMatch) return marker;
+    const afterNum = rest.slice(numMatch[1].length);
+    const ch = afterNum[0];
+    // $3s, $2x — coefficient times variable; keep as math
+    if (ch && /[a-zA-Z]/.test(ch)) return marker;
+    // $3$ … — inline math for a number; keep
+    if (afterNum.trimStart().startsWith("$")) return marker;
+    // Otherwise treat as currency (e.g. $215, $1,234.50)
+    return "\\$";
+  });
+}
+
+/**
  * Renders Markdown + LaTeX. Use `$...$` for inline math and `$$...$$` for display math.
  * `compact`: map `<p>` → `<span>` so content is valid inside `<button>` (MCQ options).
  */
@@ -20,7 +43,7 @@ type MarkdownMathProps = {
 };
 
 export function MarkdownMath({ children, className, variant = 'default' }: MarkdownMathProps) {
-  const source = children ?? '';
+  const source = escapeCurrencyDollarSigns(children ?? '');
   return (
     <div
       className={className}

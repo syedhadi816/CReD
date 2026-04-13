@@ -41,9 +41,18 @@ interface AssessmentProps {
   sessionId: string;
   onBack: () => void;
   onComplete: (data: any) => void;
+  /** Educator portal: preview administered items like a student (labels + empty copy only). */
+  educatorSandboxMode?: boolean;
 }
 
-export default function Assessment({ topic, sessionId, onBack, onComplete }: AssessmentProps) {
+export default function Assessment({
+  topic,
+  sessionId,
+  onBack,
+  onComplete,
+  educatorSandboxMode,
+}: AssessmentProps) {
+  const backLabel = educatorSandboxMode ? 'Back to questions' : 'Back to Topics';
   const [questionList, setQuestionList] = useState<QuestionItem[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<QuestionDetail | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -237,14 +246,18 @@ export default function Assessment({ topic, sessionId, onBack, onComplete }: Ass
           padding: '2rem',
         }}
       >
-        <p style={{ color: 'white', marginBottom: '1rem' }}>No questions for this topic yet.</p>
+        <p style={{ color: 'white', marginBottom: '1rem', textAlign: 'center', maxWidth: '28rem' }}>
+          {educatorSandboxMode
+            ? 'No questions in your sandbox yet. Use Administer on the educator Questions page to add MCQ items here.'
+            : 'No questions for this topic yet.'}
+        </p>
         <Button
           onClick={() => {
             void endSession(sessionId).then(() => onBack());
           }}
           className="bg-white text-purple-700 hover:bg-gray-100"
         >
-          Back to Topics
+          {backLabel}
         </Button>
       </div>
     );
@@ -293,6 +306,20 @@ export default function Assessment({ topic, sessionId, onBack, onComplete }: Ass
             filter: isSideMenuOpen ? 'blur(2px)' : 'none',
           }}
         >
+          {educatorSandboxMode ? (
+            <div
+              style={{
+                padding: '0.65rem 1.25rem',
+                background: '#ecfdf5',
+                borderBottom: '1px solid #a7f3d0',
+                fontSize: '0.8rem',
+                color: '#14532d',
+              }}
+            >
+              <strong>Student Testing Sandbox</strong> — same MCQ + help chat experience as the student app, using your
+              administered questions only. Nothing here is added to the public student topic list.
+            </div>
+          ) : null}
           <div
             style={{
               display: 'flex',
@@ -310,7 +337,7 @@ export default function Assessment({ topic, sessionId, onBack, onComplete }: Ass
               className="flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to Topics
+              {backLabel}
             </Button>
             <Button onClick={() => setIsSideMenuOpen(true)} variant="ghost" className="p-2">
               <Menu className="w-6 h-6" />

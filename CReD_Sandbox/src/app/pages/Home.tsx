@@ -6,10 +6,12 @@ import logoImage from '../../assets/da6b1869f10e5f3de33eb0e53a06a400a310b074.png
 import { login } from '../api';
 
 interface HomeProps {
+  role: "educator" | "student";
   onNavigate: () => void;
+  onBack: () => void;
 }
 
-export default function Home({ onNavigate }: HomeProps) {
+export default function Home({ role, onNavigate, onBack }: HomeProps) {
   const [email, setEmail] = useState('');
   const [accessCode, setAccessCode] = useState('');
   const [error, setError] = useState('');
@@ -32,7 +34,7 @@ export default function Home({ onNavigate }: HomeProps) {
     setError('');
     setLoading(true);
     try {
-      const data = await login(email, accessCode);
+      const data = await login(email, accessCode, role);
       localStorage.setItem('cred_token', data.token);
       onNavigate();
     } catch (e: any) {
@@ -50,7 +52,22 @@ export default function Home({ onNavigate }: HomeProps) {
       background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 50%, #4338ca 100%)'
     }}>
       {/* Header with Logo */}
-      <header style={{ width: '100%', padding: '2rem' }}>
+      <header style={{ width: '100%', padding: '1rem 2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <button
+          type="button"
+          onClick={onBack}
+          style={{
+            background: 'rgba(255,255,255,0.15)',
+            border: 'none',
+            color: 'white',
+            padding: '0.5rem 0.75rem',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+          }}
+        >
+          ← Back
+        </button>
         <div style={{ height: '4rem', display: 'flex', alignItems: 'center' }}>
           <img src={logoImage} alt="cReD Logo" style={{ height: '100%', objectFit: 'contain' }} />
         </div>
@@ -108,14 +125,16 @@ export default function Home({ onNavigate }: HomeProps) {
           </div>
 
           <div style={{ marginBottom: '1rem' }}>
-            <Label htmlFor="password">Access Code</Label>
+            <Label htmlFor="access-code">Access Code</Label>
             <Input
-              id="password"
-              type="text"
-              placeholder="Enter your access code"
+              id="access-code"
+              type="password"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              placeholder="••••••"
               style={{ width: '100%', marginTop: '0.5rem' }}
               value={accessCode}
-              onChange={(e) => setAccessCode(e.target.value)}
+              onChange={(e) => setAccessCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
               maxLength={6}
             />
           </div>

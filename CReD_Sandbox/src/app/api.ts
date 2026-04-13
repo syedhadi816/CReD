@@ -1,14 +1,17 @@
 const API_BASE = (import.meta as any).env?.VITE_API_URL ?? "http://localhost:4000";
 
+/** Topic id for educator-administered items (Student Testing Sandbox only; not listed for students). */
+export const EDUCATOR_SANDBOX_TOPIC = "My questions";
+
 function getToken(): string | null {
   return localStorage.getItem("cred_token");
 }
 
-export async function login(email: string, accessCode: string) {
+export async function login(email: string, accessCode: string, role: "educator" | "student") {
   const res = await fetch(`${API_BASE}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, accessCode }),
+    body: JSON.stringify({ email, accessCode, role }),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error ?? "Login failed");
@@ -16,19 +19,28 @@ export async function login(email: string, accessCode: string) {
 }
 
 export async function getTopics() {
-  const res = await fetch(`${API_BASE}/api/questions/topics`);
+  const token = getToken();
+  const headers: Record<string, string> = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const res = await fetch(`${API_BASE}/api/questions/topics`, { headers });
   if (!res.ok) throw new Error("Failed to fetch topics");
   return res.json() as Promise<{ id: string; name: string; description?: string }[]>;
 }
 
 export async function getQuestions(topic: string) {
-  const res = await fetch(`${API_BASE}/api/questions?topic=${encodeURIComponent(topic)}`);
+  const token = getToken();
+  const headers: Record<string, string> = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const res = await fetch(`${API_BASE}/api/questions?topic=${encodeURIComponent(topic)}`, { headers });
   if (!res.ok) throw new Error("Failed to fetch questions");
   return res.json() as Promise<{ id: string; prompt: string }[]>;
 }
 
 export async function getQuestion(questionId: string) {
-  const res = await fetch(`${API_BASE}/api/questions/${questionId}`);
+  const token = getToken();
+  const headers: Record<string, string> = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const res = await fetch(`${API_BASE}/api/questions/${encodeURIComponent(questionId)}`, { headers });
   if (!res.ok) throw new Error("Failed to fetch question");
   return res.json() as Promise<{
     id: string;
@@ -117,6 +129,111 @@ export async function sendChat(sessionId: string, questionId: string, message: s
   const data = await res.json();
   if (!res.ok) throw new Error(data.error ?? "Chat failed");
   return data as { content: string };
+}
+
+export interface GeneratedQuestion {
+  id: string;
+  prompt: string;
+}
+
+/** Educator: generate question stems via Claude (requires LLM_PROVIDER=anthropic on server). */
+export async function generateEducatorQuestions(params: {
+  prompt: string;
+  numQuestions: number;
+  gradeLevel: string;
+  /** Pass prompts already shown in this session so the model avoids repeating the same scenarios. */
+  existingPrompts?: string[];
+}): Promise<{ questions: GeneratedQuestion[]; warning?: string }> {
+  const token = getToken();
+  if (!token) throw new Error("Not logged in");
+  const body: Record<string, unknown> = {
+    prompt: params.prompt,
+    numQuestions: params.numQuestions,
+    gradeLevel: params.gradeLevel,
+  };
+  if (params.existingPrompts?.length) {
+    body.existingPrompts = params.existingPrompts;
+  }
+  const res = await fetch(`${API_BASE}/api/educator/generate-questions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error((data as { error?: string }).error ?? "Generation failed");
+  return {
+    questions: (data as { questions: GeneratedQuestion[] }).questions,
+    warning: (data as { warning?: string }).warning,
+  };
+}
+
+export type RefineMode = "instruction" | "difficulty_up" | "difficulty_down";
+
+/** Educator: refine one generated question (Claude). */
+export async function refineEducatorQuestion(params: {
+  baseQuestion: string;
+  mode: RefineMode;
+  educatorInstruction?: string;
+}): Promise<{ prompt: string }> {
+  const token = getToken();
+  if (!token) throw new Error("Not logged in");
+  const res = await fetch(`${API_BASE}/api/educator/refine-question`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify(params),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error((data as { error?: string }).error ?? "Refine failed");
+  return { prompt: (data as { prompt: string }).prompt };
+}
+
+/** Educator: PDF answer key for kept prompts (Claude + server PDF). */
+export async function exportEducatorPdf(prompts: string[]): Promise<Blob> {
+  const token = getToken();
+  if (!token) throw new Error("Not logged in");
+  const res = await fetch(`${API_BASE}/api/educator/export-pdf`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ prompts }),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error((data as { error?: string }).error ?? "PDF export failed");
+  }
+  return res.blob();
+}
+
+/** Educator: convert prompts to MCQ + tutor guide and save to “My questions”. */
+export async function getEducatorBankCount(): Promise<number> {
+  const token = getToken();
+  if (!token) throw new Error("Not logged in");
+  const res = await fetch(`${API_BASE}/api/educator/bank-count`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error((data as { error?: string }).error ?? "Failed to load bank count");
+  return (data as { count: number }).count;
+}
+
+export async function administerEducatorBank(prompts: string[]): Promise<{
+  created: number;
+  questionIds: string[];
+  errors?: { index: number; detail: string }[];
+}> {
+  const token = getToken();
+  if (!token) throw new Error("Not logged in");
+  const res = await fetch(`${API_BASE}/api/educator/administer`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ prompts }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error((data as { error?: string }).error ?? "Administer failed");
+  return data as {
+    created: number;
+    questionIds: string[];
+    errors?: { index: number; detail: string }[];
+  };
 }
 
 export async function activateHelp(sessionId: string, questionId: string) {

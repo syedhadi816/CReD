@@ -4,12 +4,19 @@ import { prisma } from "../lib/prisma";
 import { requireAuth } from "../middleware/auth";
 import { auditLog } from "../lib/auditLog";
 import { getFinalStepIndexFromStepsJson } from "../lib/questionSteps";
+import { MY_QUESTIONS_TOPIC } from "../lib/topics";
 
 export const router = Router();
 
+function bearerUserId(req: Request): string | null {
+  const auth = req.headers.authorization;
+  const token = auth?.startsWith("Bearer ") ? auth.slice(7) : null;
+  return token && token.length > 0 ? token : null;
+}
+
 // Fixed paths must come before /:id so "topics", "attempts", "sessions" are not parsed as id.
 
-/** GET /api/questions/topics — list available topics. */
+/** GET /api/questions/topics — public curriculum topics only (educator-administered items stay in the educator sandbox, not here). */
 router.get("/topics", (_req: Request, res: Response) => {
   res.json([
     {
@@ -115,6 +122,15 @@ router.post("/sessions/:sessionId/attempts", requireAuth, async (req: Request, r
     });
     if (!session) {
       res.status(404).json({ error: "Session not found" });
+      return;
+    }
+    const q = await prisma.question.findFirst({ where: { id: body.data.questionId } });
+    if (!q || q.topic !== session.topic) {
+      res.status(400).json({ error: "Question does not match this session topic" });
+      return;
+    }
+    if (q.userId && q.userId !== userId) {
+      res.status(403).json({ error: "Not allowed for this question" });
       return;
     }
     const attempt = await prisma.questionAttempt.create({
@@ -256,8 +272,23 @@ router.get("/", async (req: Request, res: Response) => {
     return;
   }
   try {
+    const uid = bearerUserId(req);
+    if (topic === MY_QUESTIONS_TOPIC) {
+      if (!uid) {
+        res.status(401).json({ error: "Authorization required for My questions" });
+        return;
+      }
+      const questions = await prisma.question.findMany({
+        where: { topic: MY_QUESTIONS_TOPIC, userId: uid },
+        select: { id: true, prompt: true },
+        orderBy: { id: "asc" },
+      });
+      res.json(questions);
+      return;
+    }
+
     const questions = await prisma.question.findMany({
-      where: { topic },
+      where: { topic, userId: null },
       select: { id: true, prompt: true },
       orderBy: { id: "asc" },
     });
@@ -276,6 +307,13 @@ router.get("/:id", async (req: Request, res: Response) => {
     if (!q) {
       res.status(404).json({ error: "Question not found" });
       return;
+    }
+    if (q.userId) {
+      const uid = bearerUserId(req);
+      if (!uid || uid !== q.userId) {
+        res.status(404).json({ error: "Question not found" });
+        return;
+      }
     }
     const finalStepIndex = getFinalStepIndexFromStepsJson(q.stepsJson);
     res.json({

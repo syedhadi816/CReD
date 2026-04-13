@@ -64,11 +64,13 @@ async function chatOllama(messages: LLMMessage[]): Promise<string> {
   return reply;
 }
 
-async function chatClaude(messages: LLMMessage[]): Promise<string> {
+async function chatClaude(messages: LLMMessage[], options?: { maxTokens?: number }): Promise<string> {
   const { claudeKey, model, provider } = getConfig();
   if (!claudeKey) {
     throw new Error("CLAUDE_API_KEY is not set");
   }
+
+  const maxTokens = options?.maxTokens ?? 512;
 
   const systemMessage = messages.find((m) => m.role === "system");
   const system = systemMessage?.content ?? "";
@@ -88,7 +90,7 @@ async function chatClaude(messages: LLMMessage[]): Promise<string> {
     },
     body: JSON.stringify({
       model,
-      max_tokens: 512,
+      max_tokens: maxTokens,
       system,
       messages: claudeMessages,
     }),
@@ -109,10 +111,13 @@ async function chatClaude(messages: LLMMessage[]): Promise<string> {
 }
 
 /** Call configured LLM; returns assistant message content or throws. */
-export async function chat(messages: LLMMessage[]): Promise<string> {
+export async function chat(messages: LLMMessage[], options?: { maxTokens?: number }): Promise<string> {
   const { provider } = getConfig();
   if (provider === "anthropic") {
-    return chatClaude(messages);
+    return chatClaude(messages, options);
+  }
+  if (options?.maxTokens != null) {
+    // Ollama path ignores maxTokens; chat API may still work.
   }
   return chatOllama(messages);
 }

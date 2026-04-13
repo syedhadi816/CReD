@@ -1,7 +1,16 @@
 import "dotenv/config";
 import * as fs from "fs";
 import * as path from "path";
+import { AccessCodeAudience } from "../src/generated/prisma/client";
 import { prisma } from "../src/lib/prisma";
+
+/** Effectively unlimited (SQLite INT max). */
+const UNLIMITED_USES = 2_147_483_647;
+
+/** Six-digit educator codes: 880101 … 880110 */
+const EDUCATOR_CODE_START = 880101;
+/** Six-digit student codes: 990101 … 990110 */
+const STUDENT_CODE_START = 990101;
 
 const BANKS: { topic: string; file: string }[] = [
   { topic: "Statistics", file: "../../statistics_item_bank/statistics_questions.json" },
@@ -87,42 +96,32 @@ async function seedTopic(topic: string, relativePath: string) {
   }
 }
 
+async function seedAccessCodes() {
+  await prisma.accessCode.deleteMany({});
+
+  const educatorRows = Array.from({ length: 10 }, (_, i) => ({
+    code: String(EDUCATOR_CODE_START + i),
+    audience: AccessCodeAudience.EDUCATOR,
+    maxUses: UNLIMITED_USES,
+    usedCount: 0,
+    notes: `Educator preset ${i + 1}/10`,
+  }));
+  const studentRows = Array.from({ length: 10 }, (_, i) => ({
+    code: String(STUDENT_CODE_START + i),
+    audience: AccessCodeAudience.STUDENT,
+    maxUses: UNLIMITED_USES,
+    usedCount: 0,
+    notes: `Student preset ${i + 1}/10`,
+  }));
+
+  await prisma.accessCode.createMany({ data: [...educatorRows, ...studentRows] });
+  console.log(
+    `Access codes: 10 educators (${EDUCATOR_CODE_START}–${EDUCATOR_CODE_START + 9}), 10 students (${STUDENT_CODE_START}–${STUDENT_CODE_START + 9}), unlimited uses.`,
+  );
+}
+
 async function main() {
-  await prisma.accessCode.upsert({
-    where: { code: "123456" },
-    create: {
-      code: "123456",
-      maxUses: 100,
-      notes: "Default pilot access code",
-    },
-    update: {},
-  });
-  await prisma.accessCode.upsert({
-    where: { code: "111111" },
-    create: {
-      code: "111111",
-      maxUses: 100,
-      notes: "Secondary pilot access code",
-    },
-    update: {},
-  });
-
-  /** Twenty codes to hand out (6-digit numeric only): 620001 … 620020. */
-  const PILOT_BATCH = 20;
-  for (let i = 1; i <= PILOT_BATCH; i++) {
-    const code = String(620000 + i);
-    await prisma.accessCode.upsert({
-      where: { code },
-      create: {
-        code,
-        maxUses: 10,
-        notes: `Pilot distribution ${i}/${PILOT_BATCH} (adjust maxUses in seed if needed)`,
-      },
-      update: {},
-    });
-  }
-
-  console.log("Access codes ready: 123456, 111111, plus 620001 … 620020.");
+  await seedAccessCodes();
 
   for (const bank of BANKS) {
     await seedTopic(bank.topic, bank.file);

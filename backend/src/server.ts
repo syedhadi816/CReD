@@ -5,6 +5,7 @@ import cors from "cors";
 import { router as authRouter } from "./routes/auth";
 import { router as questionsRouter } from "./routes/questions";
 import { router as chatRouter } from "./routes/chat";
+import { router as educatorRouter } from "./routes/educator";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.get("/", (_req, res) => {
 app.use("/api/auth", authRouter);
 app.use("/api/questions", questionsRouter);
 app.use("/api/chat", chatRouter);
+app.use("/api/educator", educatorRouter);
 
 const PORT = process.env.PORT || 4000;
 

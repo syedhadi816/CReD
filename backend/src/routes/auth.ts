@@ -2,12 +2,15 @@ import { Router, Request, Response } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { auditLog, clientIp } from "../lib/auditLog";
+import { AccessCodeAudience } from "../generated/prisma/client";
 
 export const router = Router();
 
 const LoginBody = z.object({
   email: z.string().email(),
   accessCode: z.string().min(1),
+  /** Must match the Welcome path: educator codes vs student codes. */
+  role: z.enum(["educator", "student"]),
 });
 
 /** POST /api/auth/login — validate email + access code, create or find user, return token (userId for now). */
@@ -18,13 +21,24 @@ router.post("/login", async (req: Request, res: Response) => {
       res.status(400).json({ error: "Invalid email or access code" });
       return;
     }
-    const { email, accessCode } = body.data;
+    const { email, accessCode, role } = body.data;
+    const expectedAudience =
+      role === "educator" ? AccessCodeAudience.EDUCATOR : AccessCodeAudience.STUDENT;
 
     const code = await prisma.accessCode.findUnique({
       where: { code: accessCode.trim() },
     });
     if (!code) {
       res.status(401).json({ error: "Invalid access code" });
+      return;
+    }
+    if (code.audience !== expectedAudience) {
+      res.status(401).json({
+        error:
+          role === "educator"
+            ? "This access code is for the student login. Use an educator code."
+            : "This access code is for the educator login. Use a student code.",
+      });
       return;
     }
     if (code.usedCount >= code.maxUses) {

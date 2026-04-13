@@ -32,9 +32,9 @@ Optional: set `VITE_API_URL=http://localhost:4000` in `CReD_Sandbox/.env` if the
 ### 3. Use the app
 
 1. Open the Vite URL (e.g. http://localhost:5173)
-2. Log in: any email + access code **123456** or **111111**
-3. Choose a topic (Statistics, Linear Algebra, College Linear Algebra)
-4. Answer MCQ / free-form; use **Need Help?** for the tutor chat
+2. Choose **For Students** or **For Educators**, then log in (email + 6-digit access code, e.g. **123456** or **111111**).
+3. **Students:** pick a topic (Statistics, Linear Algebra, College Linear Algebra), work through questions, use **Need Help?** for the tutor.
+4. **Educators:** enter a prompt, **Number of questions**, and **Grade level**; questions are generated with **Claude** (`LLM_PROVIDER=anthropic` and `CLAUDE_API_KEY` required in `backend/.env`).
 
 ## Project layout
 

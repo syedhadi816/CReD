@@ -17,9 +17,10 @@ model User {
   email     String
   createdAt DateTime @default(now())
 
-  sessions     AssessmentSession[]
-  messages     ChatMessage[]
-  loginEvents  PilotLoginLog[]
+  sessions       AssessmentSession[]
+  messages       ChatMessage[]
+  loginEvents    PilotLoginLog[]
+  ownedQuestions Question[]
 }
 
 /// Successful pilot logins: email, code entered, timestamp (and optional IP).
@@ -33,6 +34,11 @@ model PilotLoginLog {
   createdAt          DateTime @default(now())
 }
 
+enum AccessCodeAudience {
+  EDUCATOR
+  STUDENT
+}
+
 model AccessCode {
   id        String   @id @default(cuid())
   code      String   @unique
@@ -41,6 +47,8 @@ model AccessCode {
   usedCount Int      @default(0)
   expiresAt DateTime?
   notes     String?
+  /// Which login path may use this code (For Educators vs For Students).
+  audience  AccessCodeAudience @default(STUDENT)
 }
 
 model AssessmentSession {
@@ -67,6 +75,10 @@ model Question {
   finalAnswer String
   difficulty  String?
 
+  /// When set, this row belongs to that educator's item bank (topic is usually "My questions").
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   // MCQ vs free-form. For MCQ, use optionsJson + correctOptionIndex.
   type              QuestionType @default(FREE_FORM)
   optionsJson       Json?
@@ -76,6 +88,8 @@ model Question {
 
   attempts QuestionAttempt[]
   messages ChatMessage[]
+
+  @@index([userId, topic])
 }
 
 model QuestionAttempt {
