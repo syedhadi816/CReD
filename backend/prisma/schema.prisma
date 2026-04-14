@@ -72,6 +72,8 @@ model Question {
   id          String       @id @default(cuid())
   topic       String
   prompt      String
+  /// Pre-rendered trusted HTML generated at seed/administer time.
+  promptHtml  String?
   finalAnswer String
   difficulty  String?
 
@@ -82,6 +84,8 @@ model Question {
   // MCQ vs free-form. For MCQ, use optionsJson + correctOptionIndex.
   type              QuestionType @default(FREE_FORM)
   optionsJson       Json?
+  /// Pre-rendered HTML for each option (same order as optionsJson).
+  optionsHtml       Json?
   correctOptionIndex Int?
 
   stepsJson Json

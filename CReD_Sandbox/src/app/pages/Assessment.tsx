@@ -4,6 +4,7 @@ import { Input } from '../components/ui/input';
 import { Menu, X, Check, ArrowLeft, Send, Loader2 } from 'lucide-react';
 import logoImage from '../../assets/da6b1869f10e5f3de33eb0e53a06a400a310b074.png';
 import { MarkdownMath } from '../components/MarkdownMath';
+import { TrustedMathHtml } from '../components/TrustedMathHtml';
 import {
   getQuestions,
   getQuestion,
@@ -23,14 +24,17 @@ interface Message {
 interface QuestionItem {
   id: string;
   prompt: string;
+  promptHtml?: string;
 }
 
 interface QuestionDetail {
   id: string;
   prompt: string;
+  promptHtml?: string;
   topic: string;
   type: 'MCQ' | 'FREE_FORM';
   options: string[] | null;
+  optionsHtml?: string[] | null;
   correctOptionIndex: number | null;
   finalStepIndex?: number;
   steps?: { index: number; id: string; label: string; prompt: string }[];
@@ -361,14 +365,16 @@ export default function Assessment({
             <div
               style={{
                 width: '40%',
+                minWidth: 0,
                 padding: '1.5rem',
                 borderRight: '1px solid #f3f4f6',
                 overflowY: 'auto',
+                overflowX: 'hidden',
               }}
             >
               <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Question</h2>
-              <div style={{ fontSize: '1rem', marginBottom: '1.5rem' }}>
-                <MarkdownMath>{currentQuestion!.prompt}</MarkdownMath>
+              <div style={{ fontSize: '1rem', marginBottom: '1.5rem', minWidth: 0, overflowX: 'auto' }}>
+                <TrustedMathHtml html={currentQuestion!.promptHtml} fallbackText={currentQuestion!.prompt} />
               </div>
 
               <div style={{ marginTop: '1rem' }}>
@@ -391,7 +397,11 @@ export default function Assessment({
                             cursor: 'pointer',
                           }}
                         >
-                          <MarkdownMath variant="compact">{opt}</MarkdownMath>
+                          <TrustedMathHtml
+                            variant="compact"
+                            html={currentQuestion!.optionsHtml?.[idx] ?? null}
+                            fallbackText={opt}
+                          />
                         </button>
                       ))}
                     </div>
@@ -609,7 +619,7 @@ export default function Assessment({
                           lineClamp: 2,
                         }}
                       >
-                        <MarkdownMath variant="compact">{q.prompt}</MarkdownMath>
+                        <TrustedMathHtml variant="compact" html={q.promptHtml} fallbackText={q.prompt} />
                       </div>
                     </div>
                   ))}

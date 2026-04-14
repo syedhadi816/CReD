@@ -33,7 +33,7 @@ export async function getQuestions(topic: string) {
   if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(`${API_BASE}/api/questions?topic=${encodeURIComponent(topic)}`, { headers });
   if (!res.ok) throw new Error("Failed to fetch questions");
-  return res.json() as Promise<{ id: string; prompt: string }[]>;
+  return res.json() as Promise<{ id: string; prompt: string; promptHtml?: string }[]>;
 }
 
 export async function getQuestion(questionId: string) {
@@ -45,9 +45,12 @@ export async function getQuestion(questionId: string) {
   return res.json() as Promise<{
     id: string;
     prompt: string;
+    promptHtml?: string;
     topic: string;
     /** Server-derived; use for final answer check stepIndex. */
     finalStepIndex?: number;
+    options?: string[] | null;
+    optionsHtml?: string[] | null;
     steps?: { index: number; id: string; label: string; prompt: string }[];
   }>;
 }

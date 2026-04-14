@@ -5,6 +5,7 @@ import PDFDocument from "pdfkit";
 import { requireAuth } from "../middleware/auth";
 import { prisma } from "../lib/prisma";
 import { MY_QUESTIONS_TOPIC } from "../lib/topics";
+import { renderMarkdownToTrustedHtml, renderOptionsToTrustedHtml } from "../lib/markdownRenderer";
 import { chat, type LLMMessage } from "../services/ollama";
 
 export const router = Router();
@@ -539,14 +540,18 @@ router.post("/administer", requireAuth, async (req: Request, res: Response) => {
           if (genAttempt === 1) errors.push({ index: i, detail: "Invalid option index after verify" });
           continue;
         }
+        const promptHtml = await renderMarkdownToTrustedHtml(m.data.prompt);
+        const optionsHtml = await renderOptionsToTrustedHtml(opts);
         const row = await prisma.question.create({
           data: {
             topic: MY_QUESTIONS_TOPIC,
             userId,
             prompt: m.data.prompt,
+            promptHtml,
             finalAnswer: correct,
             type: "MCQ",
             optionsJson: opts,
+            optionsHtml: optionsHtml as unknown as object,
             correctOptionIndex: verifiedIdx,
             stepsJson: m.data.llmContext as object,
           },

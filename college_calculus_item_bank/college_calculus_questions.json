@@ -1,0 +1,244 @@
+{
+  "questions": [
+    {
+      "id": "CC-Q1",
+      "prompt": "A small drone is launched from a platform 1 meter above the ground. Its height is modeled by $f(x)=1+x^2$, where $x$ is time in seconds and $x\\ge 0$. What are the domain and range?",
+      "type": "MCQ",
+      "options": [
+        "Domain: $[0,\\infty)$, Range: $[1,\\infty)$",
+        "Domain: $(-\\infty,\\infty)$, Range: $[1,\\infty)$",
+        "Domain: $[0,\\infty)$, Range: $(1,\\infty)$",
+        "Domain: $(-\\infty,\\infty)$, Range: $(-\\infty,\\infty)$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Use context for domain (time cannot be negative), then find minimum output from the smallest allowed input.",
+        "nodes": [
+          {
+            "id": "domain",
+            "title": "Find allowed inputs",
+            "reference": "Because x is time, x>=0. Squaring adds no extra restriction."
+          },
+          {
+            "id": "range",
+            "title": "Find minimum output",
+            "reference": "f(0)=1 is the minimum; x^2 then increases, so outputs are >=1."
+          }
+        ],
+        "note": "Reference guidance only."
+      }
+    },
+    {
+      "id": "CC-Q2",
+      "prompt": "For $g(x)=\\sqrt{2x^2-3x}$, find the domain.",
+      "type": "MCQ",
+      "options": [
+        "$(-\\infty,0] \\cup [3/2,\\infty)$",
+        "$[0,3/2]$",
+        "$(-\\infty,\\infty)$",
+        "$(0,3/2)$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Square-root expressions require the radicand to be nonnegative.",
+        "nodes": [
+          {
+            "id": "ineq",
+            "title": "Set radicand >= 0",
+            "reference": "Solve 2x^2-3x>=0 -> x(2x-3)>=0."
+          }
+        ],
+        "note": "Reference guidance only."
+      }
+    },
+    {
+      "id": "CC-Q3",
+      "prompt": "Determine whether $S(x)=x^{-5}$ is even, odd, or neither.",
+      "type": "MCQ",
+      "options": [
+        "Odd",
+        "Even",
+        "Neither",
+        "Cannot be determined"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Test parity by comparing S(-x) with S(x) and -S(x).",
+        "nodes": [
+          {
+            "id": "sub",
+            "title": "Substitute -x",
+            "reference": "S(-x)=(-x)^-5=-x^-5=-S(x)."
+          }
+        ],
+        "note": "Reference guidance only."
+      }
+    },
+    {
+      "id": "CC-Q4",
+      "prompt": "Determine whether $h(t)=|t^3|$ is even, odd, or neither.",
+      "type": "MCQ",
+      "options": [
+        "Even",
+        "Odd",
+        "Neither",
+        "Undefined for negative t"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Absolute value can remove sign changes from odd powers.",
+        "nodes": [
+          {
+            "id": "sub",
+            "title": "Check h(-t)",
+            "reference": "h(-t)=|(-t)^3|=|-t^3|=|t^3|=h(t)."
+          }
+        ],
+        "note": "Reference guidance only."
+      }
+    },
+    {
+      "id": "CC-Q5",
+      "prompt": "Let $h(x)=4-x$, $g(x)=3x$, and $f(x)=x+1$. Compute $(f\\circ g\\circ h)(x)$.",
+      "type": "MCQ",
+      "options": [
+        "$13-3x$",
+        "$12-3x$",
+        "$3x-13$",
+        "$4-3x$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Composition applies inside-out: h first, then g, then f.",
+        "nodes": [
+          {
+            "id": "chain",
+            "title": "Compute step by step",
+            "reference": "h(x)=4-x; g(h(x))=12-3x; f(g(h(x)))=13-3x."
+          }
+        ],
+        "note": "Reference guidance only."
+      }
+    },
+    {
+      "id": "CC-Q6",
+      "prompt": "Given $f(x)=\\frac{x}{x-2}$, find a function $g(x)$ such that $f(g(x))=x$.",
+      "type": "MCQ",
+      "options": [
+        "$\\frac{2x}{x-1}$",
+        "$\\frac{x-1}{2x}$",
+        "$\\frac{x}{x+2}$",
+        "$\\frac{2x}{x+1}$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Set g/(g-2)=x and solve algebraically for g in terms of x.",
+        "nodes": [
+          {
+            "id": "solve",
+            "title": "Solve equation",
+            "reference": "g=x(g-2) -> g(1-x)=-2x -> g=2x/(x-1)."
+          }
+        ],
+        "note": "Reference guidance only."
+      }
+    },
+    {
+      "id": "CC-Q7",
+      "prompt": "Use a trig identity to simplify $\\cos(x-\\pi/2)$.",
+      "type": "MCQ",
+      "options": [
+        "$\\sin x$",
+        "$-\\sin x$",
+        "$\\cos x$",
+        "$-\\cos x$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Use cosine subtraction formula and unit-circle values at pi/2.",
+        "nodes": [
+          {
+            "id": "identity",
+            "title": "Expand and substitute",
+            "reference": "cos(x-pi/2)=cos x cos(pi/2)+sin x sin(pi/2)=0+sin x."
+          }
+        ],
+        "note": "Reference guidance only."
+      }
+    },
+    {
+      "id": "CC-Q8",
+      "prompt": "Find all $u$ in $[0,2\\pi]$ such that $\\sin^2 u=3/4$.",
+      "type": "MCQ",
+      "options": [
+        "$u=\\pi/3,\\ 2\\pi/3,\\ 4\\pi/3,\\ 5\\pi/3$",
+        "$u=\\pi/6,\\ 5\\pi/6$",
+        "$u=\\pi/4,\\ 3\\pi/4,\\ 5\\pi/4,\\ 7\\pi/4$",
+        "$u=0,\\pi,2\\pi$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Take square roots to get sin u = +/-sqrt(3)/2 and use the unit circle.",
+        "nodes": [
+          {
+            "id": "roots",
+            "title": "Solve trig values",
+            "reference": "Positive in Q1/Q2 and negative in Q3/Q4."
+          }
+        ],
+        "note": "Reference guidance only."
+      }
+    },
+    {
+      "id": "CC-Q9",
+      "prompt": "A trail elevation model is piecewise: for $-4\\le x\\le 0$, $y=\\sqrt{-x}$; for $0<x\\le 4$, $y=\\sqrt{x}$. What are the overall domain and range?",
+      "type": "MCQ",
+      "options": [
+        "Domain: $[-4,4]$, Range: $[0,2]$",
+        "Domain: $[-4,4]$, Range: $(0,2)$",
+        "Domain: $(-4,4)$, Range: $[0,2]$",
+        "Domain: $[-4,0]\\cup(0,4]$, Range: $(0,2]$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Analyze each piece on its interval, then combine domain/range carefully using endpoint inclusion.",
+        "nodes": [
+          {
+            "id": "piece1",
+            "title": "Left branch",
+            "reference": "On [-4,0], sqrt(-x) runs from 2 down to 0, so range [0,2]."
+          },
+          {
+            "id": "piece2",
+            "title": "Right branch",
+            "reference": "On (0,4], sqrt(x) runs from just above 0 up to 2, so range (0,2]."
+          }
+        ],
+        "note": "Reference guidance only."
+      }
+    },
+    {
+      "id": "CC-Q10",
+      "prompt": "Simplify the expression $e^{-\\ln(x^2)}$ for $x\\ne 0$.",
+      "type": "MCQ",
+      "options": [
+        "$\\frac{1}{x^2}$",
+        "$x^2$",
+        "$\\frac{1}{x}$",
+        "$-x^2$"
+      ],
+      "correctOptionIndex": 0,
+      "llmContext": {
+        "overviewText": "Use inverse relationship between exp and natural log, then account for the negative exponent.",
+        "nodes": [
+          {
+            "id": "inverse",
+            "title": "Collapse exp/log",
+            "reference": "e^{-ln(x^2)} = e^{ln((x^2)^{-1})} = (x^2)^{-1}."
+          }
+        ],
+        "note": "Reference guidance only."
+      }
+    }
+  ]
+}

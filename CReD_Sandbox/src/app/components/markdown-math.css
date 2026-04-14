@@ -1,0 +1,40 @@
+/**
+ * Hardening for math rendering in narrow/flex layouts.
+ * We force stable KaTeX display even when inherited styles are aggressive.
+ */
+.cred-markdown-math {
+  min-width: 0;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  white-space: normal;
+}
+
+/* Ensure only one visible KaTeX layer. */
+.cred-markdown-math .katex .katex-mathml {
+  display: none !important;
+}
+
+.cred-markdown-math .katex {
+  white-space: nowrap !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+.cred-markdown-math .katex .katex-html {
+  display: inline-block !important;
+}
+
+/* Display equations may scroll horizontally instead of fragmenting. */
+.cred-markdown-math .katex-display {
+  display: block !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  max-width: 100%;
+  padding: 0.25rem 0;
+}
+
+/* Keep regular prose wrapping naturally. */
+.cred-markdown-math p {
+  white-space: normal;
+  overflow-wrap: break-word;
+}

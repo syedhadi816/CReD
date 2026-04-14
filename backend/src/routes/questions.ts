@@ -5,8 +5,14 @@ import { requireAuth } from "../middleware/auth";
 import { auditLog } from "../lib/auditLog";
 import { getFinalStepIndexFromStepsJson } from "../lib/questionSteps";
 import { MY_QUESTIONS_TOPIC } from "../lib/topics";
+import { sanitizeMarkdownMathInput } from "../lib/markdownSanitizer";
+import { renderMarkdownToTrustedHtml, renderOptionsToTrustedHtml } from "../lib/markdownRenderer";
 
 export const router = Router();
+
+function sanitizeQuestionPrompt(prompt: string): string {
+  return sanitizeMarkdownMathInput(prompt);
+}
 
 function bearerUserId(req: Request): string | null {
   const auth = req.headers.authorization;
@@ -33,6 +39,11 @@ router.get("/topics", (_req: Request, res: Response) => {
       id: "College Linear Algebra",
       name: "College Linear Algebra",
       description: "College Linear Algebra Assessment",
+    },
+    {
+      id: "College Calculus",
+      name: "College Calculus",
+      description: "College Calculus Assessment",
     },
   ]);
 });
@@ -280,19 +291,29 @@ router.get("/", async (req: Request, res: Response) => {
       }
       const questions = await prisma.question.findMany({
         where: { topic: MY_QUESTIONS_TOPIC, userId: uid },
-        select: { id: true, prompt: true },
+        select: { id: true, prompt: true, promptHtml: true },
         orderBy: { id: "asc" },
       });
-      res.json(questions);
+      const out = await Promise.all(questions.map(async (q) => ({
+        id: q.id,
+        prompt: sanitizeQuestionPrompt(q.prompt),
+        promptHtml: q.promptHtml ?? (await renderMarkdownToTrustedHtml(q.prompt)),
+      })));
+      res.json(out);
       return;
     }
 
     const questions = await prisma.question.findMany({
       where: { topic, userId: null },
-      select: { id: true, prompt: true },
+      select: { id: true, prompt: true, promptHtml: true },
       orderBy: { id: "asc" },
     });
-    res.json(questions);
+    const out = await Promise.all(questions.map(async (q) => ({
+      id: q.id,
+      prompt: sanitizeQuestionPrompt(q.prompt),
+      promptHtml: q.promptHtml ?? (await renderMarkdownToTrustedHtml(q.prompt)),
+    })));
+    res.json(out);
   } catch (e) {
     console.error("List questions error:", e);
     res.status(500).json({ error: "Failed to list questions" });
@@ -316,12 +337,16 @@ router.get("/:id", async (req: Request, res: Response) => {
       }
     }
     const finalStepIndex = getFinalStepIndexFromStepsJson(q.stepsJson);
+    const options = ((q.optionsJson as unknown as string[] | null) ?? null)?.map((opt) => sanitizeQuestionPrompt(opt)) ?? null;
+    const optionsHtml = (q.optionsHtml as unknown as string[] | null) ?? (await renderOptionsToTrustedHtml(options));
     res.json({
       id: q.id,
-      prompt: q.prompt,
+      prompt: sanitizeQuestionPrompt(q.prompt),
+      promptHtml: q.promptHtml ?? (await renderMarkdownToTrustedHtml(q.prompt)),
       topic: q.topic,
       type: q.type,
-      options: (q.optionsJson as unknown as string[] | null) ?? null,
+      options,
+      optionsHtml,
       correctOptionIndex: q.correctOptionIndex,
       /** Aligns client final "Check" with server completion + analytics. */
       finalStepIndex,

@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "ts-node-dev --respawn src/server.ts",
     "seed": "tsx scripts/seed.ts",
+    "validate-banks": "tsx scripts/validate-question-banks.ts",
     "export-session": "tsx scripts/export-session.ts",
     "export-all-logs": "tsx scripts/export-all-logs.ts",
-    "render-build": "prisma generate && prisma migrate deploy && tsx scripts/seed.ts",
+    "render-build": "prisma generate && prisma migrate deploy && tsx scripts/validate-question-banks.ts && tsx scripts/seed.ts",
     "start": "tsx src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -28,7 +29,13 @@
     "ts-node-dev": "^2.0.0",
     "tsx": "^4.19.3",
     "typescript": "^5.9.3",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "unified": "latest",
+    "remark-parse": "latest",
+    "remark-math": "latest",
+    "remark-rehype": "latest",
+    "rehype-katex": "latest",
+    "rehype-stringify": "latest"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",

@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { AccessCodeAudience } from "../src/generated/prisma/client";
 import { prisma } from "../src/lib/prisma";
+import { renderMarkdownToTrustedHtml, renderOptionsToTrustedHtml } from "../src/lib/markdownRenderer";
 
 /** Effectively unlimited (SQLite INT max). */
 const UNLIMITED_USES = 2_147_483_647;
@@ -15,6 +16,10 @@ const STUDENT_CODE_START = 990101;
 const BANKS: { topic: string; file: string }[] = [
   { topic: "Statistics", file: "../../statistics_item_bank/statistics_questions.json" },
   { topic: "Linear Algebra", file: "../../linear_algebra_item_bank/linear_algebra_questions.json" },
+  {
+    topic: "College Calculus",
+    file: "../../college_calculus_item_bank/college_calculus_questions.json",
+  },
   {
     topic: "College Linear Algebra",
     file: "../../linear_algebra_2_item_bank/linear_algebra_2_questions.json",
@@ -61,7 +66,7 @@ async function seedTopic(topic: string, relativePath: string) {
 
   // Item bank uses stable ids (e.g. LA-Q1). Prompt edits used to orphan old rows because upsert matched on full prompt text.
   const wipeTopicFirst =
-    topic === "Linear Algebra" || topic === "College Linear Algebra";
+    topic === "Linear Algebra" || topic === "College Linear Algebra" || topic === "College Calculus";
   if (wipeTopicFirst) {
     await pruneTopicQuestions(topic);
   }
@@ -72,12 +77,16 @@ async function seedTopic(topic: string, relativePath: string) {
       : await prisma.question.findFirst({
           where: { topic, prompt: q.prompt },
         });
+    const promptHtml = await renderMarkdownToTrustedHtml(q.prompt);
+    const optionsHtml = await renderOptionsToTrustedHtml(q.options);
     const baseData = {
       topic,
       prompt: q.prompt,
+      promptHtml,
       finalAnswer: "",
       type: q.type,
       optionsJson: q.options as unknown as object,
+      optionsHtml: optionsHtml as unknown as object,
       correctOptionIndex: q.correctOptionIndex,
       stepsJson: q.llmContext as object,
     };

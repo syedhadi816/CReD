@@ -1,0 +1,166 @@
+
+	1	Domain and range
+	2	Even and odd functions
+	3	Function composition
+	4	Trigonometric functions
+	5	Exponential functions
+	6	Inverse functions
+	7	Logarithmic functions
+	8	(Piecewise depending on how much this book covers it)
+ 
+	1	A small drone is launched from a platform that is 1 meter above the ground. Its height in meters, f(x), increases over time x (in seconds) according to the equation f(x) = 1 + x². Find the domain and range of this function
+	a	Functions 1.1
+	b	Definition of domain and range. 1.1 opens with just that
+	c	the domain is the set of all input values x for which the function is defined. 1.1 teaches that you find it by asking two questions: is there anything mathematically that breaks for a certain x value? This function, f(x) = 1 + x² has no mathematical restrictions.  Squaring works for any number. So the only restriction comes from the context: x is time, and time cannot be negative. The range is the set of all output values f(x) actually produced by the domain. 1.1 teaches that you find it by evaluating the function at the boundary of the domain and then reasoning about whether the function grows, shrinks, or stays bounded. Here, plug in the smallest domain value x = 0: f(0) = 1 + 0 = 1. That's the minimum height. Since x² only grows from there, f(x) only increases.
+	d	After identifying the domain as [0, +∞), you plug in x = 0 (the smallest input) and get: f(0) = 1 + 0² = 1
+ 
+	2	A skateboarder rides along a curved ramp. His horizontal distance from the starting point in metres, g(x), depends on the number of seconds x he has been riding, according to the rule: g(x) = √(2x² − 3x). Find the domain and range of this function.
+	a	Functions 1.1
+	b	Definition of domain and range. 1.1 opens with just that
+	c	Is there anything mathematically that breaks for a certain x value? 1.1 teaches that the expression inside a square root must be greater than or equal to zero — you cannot take the square root of a negative number. So we need 2x² − 3x ≥ 0. Factor the left side: x(2x − 3) ≥ 0. This is zero at x = 0 and x = 3/2. Since the parabola opens upward, the expression is greater than or equal to zero outside and at those roots — meaning x ≤ 0 or x ≥ 3/2. The domain is (−∞, 0] ∪ [3/2, +∞).The range is the set of all output values g(x) produced by that domain. Since g(x) is a square root, its output is always greater than or equal to zero. At both boundary points x = 0 and x = 3/2, g(x) = 0. As x moves away from those boundaries in either direction, 2x² − 3x grows without bound, so g(x) grows without bound. The range is [0, +∞).
+	d	After identifying the domain as (−∞, 0] ∪ [3/2, +∞), plug in either boundary point x = 0 or x = 3/2 and get: g(0) = √(0) = 0.
+ 
+ 
+	3	A student measures a quantity on either side of a centre point. The value at position x is given by: S(x) = x⁻⁵. If she measures at x = 2 and x = −2, will she get the same value, the opposite value, or something different? Determine whether S(x) is even, odd, or neither.
+	a	 Functions 1.1
+	b	Even and odd functions. 1.1 covers this — a function is even if f(−x) = f(x) for all x, and odd if f(−x) = −f(x) for all x.
+	c	To determine whether S(x) = x⁻⁵ is even, odd, or neither, 1.1 teaches that you substitute −x in place of x and simplify, then compare the result to the original function and its negative. Substituting: S(−x) = (−x)⁻⁵. A negative number raised to an odd power stays negative, so (−x)⁻⁵ = −x⁻⁵. Comparing: S(−x) = −x⁻⁵ = −S(x). This matches the definition of an odd function exactly.
+	d	After substituting −x into the function: S(−x) = (−x)⁻⁵ = −x⁻⁵. Since this equals −S(x), the function is odd.
+ 
+	4	A car moves along a road. Its distance from a checkpoint in metres, h(t), depends on time t (in seconds) according to: h(t) = |t³|. At t = 2 and t = −2, will the car be the same distance from the checkpoint, the opposite distance, or something different? Determine whether h(t) is even, odd, or neither.
+	a	Functions 1.1
+	b	Even and odd functions. 1.1 teaches that a function is even if f(−x) = f(x), odd if f(−x) = −f(x), and neither if it satisfies neither condition.
+	c	To determine whether h(t) = |t³| is even, odd, or neither, substitute −t in place of t and simplify. h(−t) = |(−t)³|. First simplify inside the absolute value: (−t)³ = −t³. Now apply the absolute value: |−t³| = |t³|. Comparing: h(−t) = |t³| = h(t). This matches the definition of an even function exactly. The absolute value cancels out any sign difference that the odd exponent introduced, making the output always positive regardless of whether t is positive or negative.
+	d	After substituting −t into the function: h(−t) = |(−t)³| = |−t³| = |t³|. Since this equals h(t), the function is even.
+	e	Questions 3 and 4 test the same skill however the difficulty level was increased slightly due to the modulus sign.
+ 
+	5	A factory has three machines applied in sequence. Machine h subtracts your input from 4. Machine g triples the result. Machine f adds 1. Write a single formula for the output when all three are applied in order.
+	a	Functions 1.2
+	b	Composition of functions. 1.2 teaches that (f ∘ g ∘ h)(x) means f(g(h(x))) — you work from the inside out, applying h first, then g, then f.
+	c	Start with the innermost function and work outward. Step 1 — apply h: h(x) = 4 − x. Step 2 — feed that into g: g(h(x)) = g(4 − x) = 3(4 − x) = 12 − 3x. Step 3 — feed that into f: f(g(h(x))) = (12 − 3x) + 1 = 13 − 3x.
+	d	After working through all three machines in order: (f ∘ g ∘ h)(x) = 13 − 3x
+	e	This question tests substituting an entire function into another function which is higher level difficulty than even and odd which just requires different signs.
+ 
+	6	A machine applies the rule f(x) = x/(x−2) to any input. A student wants to build a second machine g(x) that, when its output is fed into f, gives back the original number. Find g(x).
+	a	Functions 1.2
+	b	1.1 gives you the foundational idea that a function takes an input and produces an output, which you need to even understand what composition means.
+	c	Composition of functions and inverse-like functions. 1.2 teaches that (f ∘ g)(x) means f(g(x)) — you substitute g(x) in as the input to f. If the result equals x, then g is essentially undoing what f does.
+	d	Substitute g(x) into f in place of x: f(g(x)) = g(x) / (g(x) − 2). Set this equal to x and solve for g(x). Cross multiply: g(x) = x(g(x) − 2). Expand: g(x) = x·g(x) − 2x. Rearrange: g(x) − x·g(x) = −2x. Factor: g(x)(1 − x) = −2x. Divide: g(x) = −2x/(1−x) = 2x/(x−1).
+	e	After setting f(g(x)) = x and solving: g(x) = 2x/(x−1). verify by substituting back: f(2x/(x−1)) = [2x/(x−1)] / [2x/(x−1) − 2] = x. This checks out.
+	f	Can the student recognise that substitution is the same mechanical process regardless of whether you're plugging in a number, −x, or a whole new function?
+ 
+	7	A sound engineer notices that shifting a cosine wave to the right by π/2 produces the same wave as a sine function. Using the addition formula for cosine, prove that cos(x − π/2) = sin x.
+	a	Functions 1.3
+	b	The addition formula for cosine.1.3 teaches that cos(A − B) = cos A cos B + sin A sin B.
+	c	 Prior identities/knowledge you must have:
+●      cos(π/2) = 0
+●      sin(π/2) = 1
+●      The addition formula: cos(A − B) = cos A cos B + sin A sin B
+●      These are standard unit circle values a student must have memorised before attempting this.
+	d	Apply the addition formula with A = x and B = π/2. Expand: cos(x − π/2) = cos x · cos(π/2) + sin x · sin(π/2). Substitute known values: = cos x · 0 + sin x · 1. Simplify: = sin x.
+	e	After substituting unit circle values: cos x · 0 + sin x · 1 = sin x.
+	f	The difficulty level is being upped compared to the last question as this contains trigonometry.
+ 
+	8	A physics student claims that the sine of the difference between two wave angles A and B can always be broken into simpler parts. Using the addition formula for sine, prove that sin(A − B) = sin A cos B − cos A sin B.
+	a	Functions 1.3
+	b	The addition formula for sine.1.3 teaches that sin(A + B) = sin A cos B + cos A sin B.
+	c	 Prior identities/knowledge you must have:
+●      sin(A + B) = sin A cos B + cos A sin B
+●      sin(−B) = −sin B (sine is an odd function)
+●      cos(−B) = cos B (cosine is an even function)
+●      These two even/odd trig identities are essential — without them you cannot convert the addition formula into a subtraction formula.
+	d	Rewrite subtraction as adding a negative: sin(A − B) = sin(A + (−B)). Apply the addition formula: = sin A cos(−B) + cos A sin(−B). Now apply the even/odd identities: cos(−B) = cos B and sin(−B) = −sin B. Substitute: = sin A cos B + cos A(−sin B) = sin A cos B − cos A sin B.
+	e	After applying even/odd identities: sin A cos(−B) + cos A sin(−B) = sin A cos B − cos A sin B
+	f	The previous question and this question use the same skill. Applying an addition/subtraction formula and substituting known identities to simplify.
+ 
+	9	A mechanical wheel rotates and its vertical position is tracked. At a certain moment the square of its sine value equals 3/4. Find all angles u where 0 ≤ u ≤ 2π that satisfy sin²u = 3/4.
+	a	1.3  Trigonometric Functions
+	b	Solving trigonometric equations within a restricted interval. 1.3 teaches that trig functions are periodic so multiple angles can satisfy the same equation within [0, 2π].
+	c	  Prior identities/knowledge you must have:
+●      sin²u + cos²u = 1 (Pythagorean identity)
+●      Standard unit circle values: sin u = √3/2 at u = π/3 and u = 2π/3
+●      sin u = −√3/2 at u = 4π/3 and u = 5π/3
+●      That square rooting introduces both positive and negative solutions
+	d	Take the square root of both sides: sin u = ±√(3/4) = ±√3/2. From the unit circle, sin u = √3/2 at u = π/3 and u = 2π/3. sin u = −√3/2 at u = 4π/3 and u = 5π/3. All four values lie within [0, 2π].
+	e	After taking the square root: sin u = ±√3/2, giving u = π/3, 2π/3, 4π/3, 5π/3.
+ 
+	10	 The same wheel reaches a position where its squared sine and squared cosine values are equal. Find all angles u where 0 ≤ u ≤ 2π that satisfy sin²u = cos²u.
+	a	1.3  Trigonometric Functions
+	b	 Solving trigonometric equations within a restricted interval. §1.3 teaches that when two trig expressions are set equal, rearranging into a single trig ratio often simplifies the equation.
+	c	 Prior identities/knowledge you must have:
+●      sin²u + cos²u = 1 (Pythagorean identity)
+●      tan u = sin u / cos u
+●      tan u = 1 at u = π/4 and u = 5π/4
+●      tan u = −1 at u = 3π/4 and u = 7π/4
+●      That sin²u = cos²u is equivalent to tan²u = 1
+	d	Rewrite as sin²u − cos²u = 0. Factor: (sin u − cos u)(sin u + cos u) = 0. Either sin u = cos u giving tan u = 1, or sin u = −cos u giving tan u = −1. From the unit circle: tan u = 1 at u = π/4 and u = 5π/4. tan u = −1 at u = 3π/4 and u = 7π/4.
+	e	After factoring: tan u = ±1, giving u = π/4, 3π/4, 5π/4, 7π/4.
+	f	Both the previous and this question solve trig equations on [0, 2π] using unit circle values. The previous one isolates sin u directly by square rooting. This one requires the student to first recognise that sin²u = cos²u simplifies to tan²u = 1 before solving. The transfer being tested is: can the student identify when to convert a two-trig equation into a single ratio rather than tackling each side separately?
+ 
+	11	A scientist multiplies two measurements of the same base quantity: 9^(1/3) and 9^(1/6). Using the laws of exponents, simplify the result into a single expression.
+	a	Exponential functions 1.5
+	b	Laws of exponents. 1.5 teaches that when multiplying two powers with the same base, you add the exponents: a^m · a^n = a^(m+n).
+	c	 Prior knowledge you must have:
+●      a^m · a^n = a^(m+n)
+●      How to add fractions: 1/3 + 1/6 requires a common denominator
+●      That a^(1/n) = the nth root of a
+	d	Both terms share base 9, so add the exponents: 9^(1/3) · 9^(1/6) = 9^(1/3 + 1/6). Find common denominator: 1/3 = 2/6, so 2/6 + 1/6 = 3/6 = 1/2. Therefore 9^(1/2).After adding exponents: 9^(1/3 + 1/6) = 9^(1/2) = √9 = 3.
+	11	A scientist divides two measurements of the same base quantity: 4³·² and 4³·⁷. Using the laws of exponents, simplify the result into a single expression.
+	a	Exponential functions 1.5
+	b	 Laws of exponents. 1.5 teaches that when dividing two powers with the same base, you subtract the exponents: aᵐ ÷ aⁿ = aᵐ⁻ⁿ.
+	c	 Prior knowledge you must have:
+●      aᵐ ÷ aⁿ = aᵐ⁻ⁿ
+●      a⁻ⁿ = 1/aⁿ (negative exponent means reciprocal)
+●      How to subtract decimals: 3.2 − 3.7 = −0.5
+	d	Both terms share base 4, so subtract the exponents: 4³·² ÷ 4³·⁷ = 4⁽³·²⁻³·⁷⁾ = 4⁻⁰·⁵. Apply negative exponent rule: 4⁻⁰·⁵ = 1/4⁰·⁵ = 1/√4.  After subtracting exponents: 4⁽³·²⁻³·⁷⁾ = 4⁻⁰·⁵ = 1/√4 = ½.
+	e	Both questions apply the same base rule — same base means operate on the exponents directly. The previous question multiplied so exponents were added giving a positive result. This one divides so exponents are subtracted producing a negative exponent. The transfer being tested is: can the student recognise that a negative exponent is not a dead end but simply signals a reciprocal, and continue simplifying from there?
+ 
+	13	A chemistry student needs to calculate ln 0.75 but only has the values of ln 2 and ln 3 available. Using the laws of logarithms, express ln 0.75 in terms of ln 2 and ln 3.
+	a	Inverse Functions and Logarithms 1.6
+	b	Laws of logarithms. 1.6 teaches that logarithms can be broken apart using: ln(a/b) = ln a − ln b and ln(aⁿ) = n ln a.
+	c	  Prior knowledge you must have:
+●      ln(a/b) = ln a − ln b
+●      ln(aᵐ) = m ln a
+●      That 0.75 = 3/4 = 3/2²
+●      ln 1 = 0
+●      That ln 2 and ln 3 are the building blocks here — any number expressible as a product or quotient of powers of 2 and 3 can be written in terms of them
+	d	First rewrite 0.75 as a fraction: 0.75 = 3/4 = 3/2². Now apply log laws: ln(3/2²) = ln 3 − ln 2². Apply power rule: = ln 3 − 2 ln 2.  After applying log laws: ln 0.75 = ln 3 − ln 2² = ln 3 − 2 ln 2.
+ 
+	14	A student is simplifying a complex expression on their calculator and encounters e^(−ln x²). Using the laws of logarithms and exponentials, simplify this into its most basic form.
+	a	1.6 Inverse Functions and Logarithms
+	b	Simplifying expressions using inverse relationship between eˣ and ln x. 1.6 teaches that eˡⁿ ˣ = x — the exponential and natural log undo each other.
+	c	 Prior knowledge you must have:
+●      eˡⁿ ˣ = x (exponential and ln are inverses)
+●      ln(xⁿ) = n ln x (power rule for logarithms)
+●      e⁻ᵃ = 1/eᵃ (negative exponent means reciprocal)
+●      These three rules must all be applied in sequence
+	d	First apply the power rule inside the exponent: e^(−ln x²) = e^(−2 ln x). Rewrite the negative: = e^(ln x⁻²) = e^(ln(1/x²)). Now apply the inverse rule eˡⁿ ˣ = x:  = 1/x². After applying power rule then inverse rule: e^(−ln x²) = e^(ln x⁻²) = 1/x².
+	e	Both questions use logarithm laws to simplify expressions. The previous question broke a logarithm apart using quotient and power rules. This question goes the other direction — using the inverse relationship between eˣ and ln to collapse a complex exponential into a simple fraction. The transfer being tested is: can the student recognise when eˡⁿ⁽⁻⁾ = x applies and use it to eliminate both the exponential and the logarithm in one step?
+ 
+	15	A park has a walking trail split into two sections. On the left side of the park (−4 ≤ x ≤ 0) the elevation follows y = √(−x), and on the right side (0 < x ≤ 4) it follows y = √x. Find the domain and range of the trail's elevation function.
+	a	Sort of all of the functions, especially back to 1.1 though.
+	b	Piecewise functions. 1.1 teaches that domain and range must be evaluated separately for each piece then combined.
+	c	 Prior knowledge you must have:
+●      √x is only defined when x ≥ 0
+●      √(−x) is only defined when −x ≥ 0, meaning x ≤ 0
+●      Square roots always produce outputs ≥ 0
+●      How to evaluate each piece at its boundary points
+	d	 Domain is directly stated as [−4, 0] ∪ (0, 4] = [−4, 4]. Piece 1 — y = √(−x) on [−4, 0]: at x = −4, y = 2; at x = 0, y = 0; decreasing, so range is [0, 2]. Piece 2 — y = √x on (0, 4]: at x → 0⁺, y → 0 (not included); at x = 4, y = 2; increasing, so range is (0, 2].
+	e	After evaluating both pieces at their boundaries: Piece 1 range: [0, 2] Piece 2 range: (0, 2]. Combined range: [0, 2]. The 0 is included because Piece 1 achieves it at x = 0.
+ 
+	16	A car's speed changes across three zones of a test track. In zone 1 (−2 ≤ x ≤ −1) speed follows y = −x − 2. In zone 2 (−1 < x ≤ 1) it follows y = x. In zone 3 (1 < x ≤ 2) it follows y = −x + 2. Find the domain and range of the speed function across the full track.
+	a	Sort of all of the functions, especially back to 1.1 though.
+	b	Piecewise functions. 1.1 teaches that domain and range must be evaluated separately for each piece then combined.
+	c	  Prior knowledge you must have:
+●      Linear functions have no mathematical restrictions — domain comes entirely from stated intervals
+●      How to evaluate each piece at its boundary points
+●      That endpoints marked with < are not included in the range
+	d	Domain is directly stated as [−2, −1] ∪ (−1, 1] ∪ (1, 2] = [−2, 2]. Piece 1 — y = −x − 2 on [−2, −1]: at x = −2, y = 0; at x = −1, y = −1; decreasing, range is [−1, 0]. Piece 2 — y = x on (−1, 1]: at x → −1⁺, y → −1 (not included); at x = 1, y = 1; increasing, range is (−1, 1]. Piece 3 — y = −x + 2 on (1, 2]: at x → 1⁺, y → 1 (not included); at x = 2, y = 0; decreasing, range is [0, 1).
+	e	After evaluating all three pieces: ranges are [−1, 0], (−1, 1], [0, 1). Combined range: [−1, 1].
+	f	Both questions, the previous and this, find the domain and range of piecewise functions. The previous had two pieces with square root restrictions — the range was constrained mathematically. This question has three linear pieces with no mathematical restrictions — evaluation is purely about tracking each piece at its boundaries. The transfer being tested is: can the student apply the same boundary evaluation process across three pieces and correctly merge the resulting intervals?
+ 
+ 
+ 
+ 
+ 
+ 
