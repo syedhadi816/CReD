@@ -402,10 +402,12 @@ function buildPdfBuffer(prompts: string[], solutions: string[]): Promise<Buffer>
 const ADMINISTER_SYSTEM = `You prepare assessment content for a math learning platform.
 
 Convert the educator's free-form question into one multiple-choice item for students.
+The administered stem must remain the same educator question (same scenario, entities, and numbers).
+Do not replace it with a different setup; only adapt it into MCQ form.
 
 **Output ONLY valid JSON** with one object:
 {
-  "prompt": string — the MCQ stem only (clear; keep given numbers/context from the original).
+  "prompt": string — the MCQ stem, preserving the educator question content.
   "options": string[] — exactly 4 distinct options.
   "correctOptionIndex": number — 0–3 for the correct option.
   "llmContext": {
@@ -417,6 +419,10 @@ Convert the educator's free-form question into one multiple-choice item for stud
 Distractors must be plausible but incorrect. Exactly one option must be mathematically correct — re-check all arithmetic before answering.
 
 No markdown fences—only the JSON object.`;
+
+function normalizeForMatch(s: string): string {
+  return s.replace(/\s+/g, " ").trim().toLowerCase();
+}
 
 /** POST /api/educator/export-pdf — answer key PDF for kept prompts (Claude + pdfkit). */
 router.post("/export-pdf", requireAuth, async (req: Request, res: Response) => {
@@ -516,7 +522,7 @@ router.post("/administer", requireAuth, async (req: Request, res: Response) => {
               content:
                 genAttempt === 0
                   ? `Educator question:\n\n${stem}`
-                  : `The previous JSON was invalid or options were wrong. Regenerate a complete MCQ for this question. Output ONLY valid JSON as specified.\n\nEducator question:\n\n${stem}`,
+                  : `The previous JSON was invalid, options were wrong, or the stem changed. Regenerate a complete MCQ for this question and keep the stem semantically identical to the educator question (same scenario and values). Output ONLY valid JSON as specified.\n\nEducator question:\n\n${stem}`,
             },
           ],
           { maxTokens: 8192 },
@@ -533,20 +539,27 @@ router.post("/administer", requireAuth, async (req: Request, res: Response) => {
           if (genAttempt === 1) errors.push({ index: i, detail: "Invalid MCQ shape" });
           continue;
         }
+        const promptMatches = normalizeForMatch(m.data.prompt) === normalizeForMatch(stem);
+        if (!promptMatches) {
+          if (genAttempt === 1) {
+            errors.push({ index: i, detail: "MCQ stem diverged from educator question" });
+          }
+          continue;
+        }
         const opts = m.data.options;
-        const verifiedIdx = await verifyMcqAnswer(stem, m.data.prompt, opts, m.data.correctOptionIndex);
+        const verifiedIdx = await verifyMcqAnswer(stem, stem, opts, m.data.correctOptionIndex);
         const correct = opts[verifiedIdx] ?? "";
         if (!correct.trim()) {
           if (genAttempt === 1) errors.push({ index: i, detail: "Invalid option index after verify" });
           continue;
         }
-        const promptHtml = await renderMarkdownToTrustedHtml(m.data.prompt);
+        const promptHtml = await renderMarkdownToTrustedHtml(stem);
         const optionsHtml = await renderOptionsToTrustedHtml(opts);
         const row = await prisma.question.create({
           data: {
             topic: MY_QUESTIONS_TOPIC,
             userId,
-            prompt: m.data.prompt,
+            prompt: stem,
             promptHtml,
             finalAnswer: correct,
             type: "MCQ",

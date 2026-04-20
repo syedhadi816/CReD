@@ -54,6 +54,7 @@ export default function App() {
   const [educatorAdministerLoading, setEducatorAdministerLoading] = useState(false);
   const [educatorBankCount, setEducatorBankCount] = useState(0);
   const [studentSandboxLoading, setStudentSandboxLoading] = useState(false);
+  const [educatorSandboxQuestionIds, setEducatorSandboxQuestionIds] = useState<string[] | null>(null);
 
   if (typeof document !== 'undefined') {
     document.title = 'CReD Sandbox';
@@ -76,6 +77,9 @@ export default function App() {
       if (page === 'assessment' || page === 'educator-sandbox') {
         setSelectedTopic(data.topic);
         setSessionId(data.sessionId ?? '');
+        setEducatorSandboxQuestionIds(
+          page === 'educator-sandbox' && Array.isArray(data.questionIds) ? data.questionIds : null,
+        );
       } else if (page === 'results') {
         setResultsData(data);
       }
@@ -136,7 +140,11 @@ export default function App() {
       }
       if (result.created > 0) {
         const { sessionId: sid } = await createSession(EDUCATOR_SANDBOX_TOPIC);
-        navigate('educator-sandbox', { topic: EDUCATOR_SANDBOX_TOPIC, sessionId: sid });
+        navigate('educator-sandbox', {
+          topic: EDUCATOR_SANDBOX_TOPIC,
+          sessionId: sid,
+          questionIds: result.questionIds,
+        });
         setEducatorWarning(null);
       } else {
         setEducatorWarning(
@@ -157,6 +165,7 @@ export default function App() {
     setEducatorWarning(null);
     try {
       const { sessionId: sid } = await createSession(EDUCATOR_SANDBOX_TOPIC);
+      setEducatorSandboxQuestionIds(null);
       navigate('educator-sandbox', { topic: EDUCATOR_SANDBOX_TOPIC, sessionId: sid });
     } catch (e: unknown) {
       setEducatorWarning(e instanceof Error ? e.message : 'Could not open sandbox');
@@ -297,6 +306,7 @@ export default function App() {
         topic={selectedTopic}
         sessionId={sessionId}
         educatorSandboxMode
+        questionIds={educatorSandboxQuestionIds ?? undefined}
         onBack={() => {
           void endSession(sessionId).then(() => navigate('educator-questions'));
         }}

@@ -47,6 +47,8 @@ interface AssessmentProps {
   onComplete: (data: any) => void;
   /** Educator portal: preview administered items like a student (labels + empty copy only). */
   educatorSandboxMode?: boolean;
+  /** Optional subset to enforce exact administered set and ordering. */
+  questionIds?: string[];
 }
 
 export default function Assessment({
@@ -55,6 +57,7 @@ export default function Assessment({
   onBack,
   onComplete,
   educatorSandboxMode,
+  questionIds,
 }: AssessmentProps) {
   const backLabel = educatorSandboxMode ? 'Back to questions' : 'Back to Topics';
   const [questionList, setQuestionList] = useState<QuestionItem[]>([]);
@@ -92,10 +95,18 @@ export default function Assessment({
 
   useEffect(() => {
     getQuestions(topic)
-      .then(setQuestionList)
+      .then((rows) => {
+        if (!questionIds || questionIds.length === 0) {
+          setQuestionList(rows);
+          return;
+        }
+        const byId = new Map(rows.map((q) => [q.id, q]));
+        const exactSet = questionIds.map((id) => byId.get(id)).filter((q): q is QuestionItem => Boolean(q));
+        setQuestionList(exactSet);
+      })
       .catch((e) => setError(e?.message ?? 'Failed to load questions'))
       .finally(() => setLoading(false));
-  }, [topic]);
+  }, [topic, questionIds]);
 
   /** Best-effort session end on tab close / refresh (keepalive fetch). */
   useEffect(() => {
