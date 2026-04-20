@@ -64,7 +64,10 @@ async function chatOllama(messages: LLMMessage[]): Promise<string> {
   return reply;
 }
 
-async function chatClaude(messages: LLMMessage[], options?: { maxTokens?: number }): Promise<string> {
+async function chatClaude(
+  messages: LLMMessage[],
+  options?: { maxTokens?: number; temperature?: number },
+): Promise<string> {
   const { claudeKey, model, provider } = getConfig();
   if (!claudeKey) {
     throw new Error("CLAUDE_API_KEY is not set");
@@ -81,6 +84,16 @@ async function chatClaude(messages: LLMMessage[], options?: { maxTokens?: number
     content: [{ type: "text", text: m.content }],
   }));
 
+  const body: Record<string, unknown> = {
+    model,
+    max_tokens: maxTokens,
+    system,
+    messages: claudeMessages,
+  };
+  if (options?.temperature !== undefined) {
+    body.temperature = options.temperature;
+  }
+
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -88,12 +101,7 @@ async function chatClaude(messages: LLMMessage[], options?: { maxTokens?: number
       "x-api-key": claudeKey,
       "anthropic-version": "2023-06-01",
     },
-    body: JSON.stringify({
-      model,
-      max_tokens: maxTokens,
-      system,
-      messages: claudeMessages,
-    }),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
@@ -111,7 +119,10 @@ async function chatClaude(messages: LLMMessage[], options?: { maxTokens?: number
 }
 
 /** Call configured LLM; returns assistant message content or throws. */
-export async function chat(messages: LLMMessage[], options?: { maxTokens?: number }): Promise<string> {
+export async function chat(
+  messages: LLMMessage[],
+  options?: { maxTokens?: number; temperature?: number },
+): Promise<string> {
   const { provider } = getConfig();
   if (provider === "anthropic") {
     return chatClaude(messages, options);

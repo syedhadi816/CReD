@@ -324,30 +324,76 @@ const McqAdministerSchema = z.object({
   llmContext: z.unknown(),
 });
 
-const VerifyMcqSchema = z.object({
-  correctOptionIndex: z.number().int().min(0).max(3),
+const GroundTruthAnswerSchema = z.object({
+  answer: z.string().min(1),
 });
 
-/** Second-pass verifier: picks which option is actually correct (fixes model mistakes). */
-async function verifyMcqAnswer(
-  originalStem: string,
-  prompt: string,
-  options: string[],
-  modelClaimed: number,
-): Promise<number> {
-  const system = `You are a careful math verifier. Given a problem and exactly four options, decide which single option is mathematically correct. Reply ONLY valid JSON: {"correctOptionIndex":0|1|2|3} — no other keys, no explanation outside JSON.`;
+const SemanticOptionMatchSchema = z.object({
+  correctOptionIndex: z.union([z.number().int().min(0).max(3), z.null()]),
+});
+
+const GROUND_TRUTH_SYSTEM = `You are a careful math tutor solving assessment items. Output ONLY valid JSON with one object: {"answer":"..."}.
+
+The "answer" must be the definitive correct result in the shortest form that could appear as one multiple-choice option (number, expression, or short phrase). No explanation, no markdown fences.`;
+
+function stripMcqLabel(s: string): string {
+  return s.replace(/^\s*\(?[A-Za-z]\)?[\.\)]\s*/, "").trim();
+}
+
+function normalizeComparable(s: string): string {
+  return s.replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+/** First index whose text matches canonical truth (normalized), or -1. */
+function findMatchingOptionIndex(options: string[], truth: string): number {
+  const t = normalizeComparable(stripMcqLabel(truth));
+  if (!t) return -1;
+  for (let i = 0; i < options.length; i++) {
+    const o = normalizeComparable(stripMcqLabel(options[i]!));
+    if (o === t) return i;
+  }
+  for (let i = 0; i < options.length; i++) {
+    const o = normalizeComparable(stripMcqLabel(options[i]!));
+    if (o.includes(t) || t.includes(o)) {
+      const minLen = Math.min(o.length, t.length);
+      if (minLen >= 4 || /^\d/.test(t)) return i;
+    }
+  }
+  return -1;
+}
+
+async function resolveGroundTruthAnswer(stem: string): Promise<string | null> {
+  try {
+    const raw = await chat(
+      [
+        { role: "system", content: GROUND_TRUTH_SYSTEM },
+        {
+          role: "user",
+          content: `Solve this. Reply with JSON only as specified.\n\nQuestion:\n\n${stem}`,
+        },
+      ],
+      { maxTokens: 2048, temperature: 0 },
+    );
+    const data = extractJsonObject(raw);
+    const p = GroundTruthAnswerSchema.safeParse(data);
+    return p.success ? p.data.answer.trim() : null;
+  } catch {
+    return null;
+  }
+}
+
+/** When string match fails (e.g. 0.5 vs 1/2), ask which option is mathematically the same as truth. */
+async function resolveSemanticOptionIndex(truth: string, options: string[]): Promise<number | null> {
+  const system = `You match a canonical correct answer to multiple-choice options. Output ONLY valid JSON: {"correctOptionIndex":0|1|2|3} if exactly one option is mathematically equivalent to the canonical answer, else {"correctOptionIndex":null}. No other keys.`;
 
   const user = [
-    "Original educator question:",
-    originalStem,
-    "",
-    "MCQ stem (shown to students):",
-    prompt,
+    "Canonical correct answer:",
+    truth,
     "",
     "Options:",
     ...options.map((o, i) => `${i}: ${o}`),
     "",
-    `A generator claimed the correct answer is option ${modelClaimed}. If that is wrong, output the correct index anyway.`,
+    "Which single option index (if any) matches?",
   ].join("\n");
 
   try {
@@ -356,14 +402,14 @@ async function verifyMcqAnswer(
         { role: "system", content: system },
         { role: "user", content: user },
       ],
-      { maxTokens: 1024 },
+      { maxTokens: 512, temperature: 0 },
     );
     const data = extractJsonObject(raw);
-    const p = VerifyMcqSchema.safeParse(data);
-    if (!p.success) return modelClaimed;
+    const p = SemanticOptionMatchSchema.safeParse(data);
+    if (!p.success || p.data.correctOptionIndex == null) return null;
     return p.data.correctOptionIndex;
   } catch {
-    return modelClaimed;
+    return null;
   }
 }
 
@@ -507,41 +553,72 @@ router.post("/administer", requireAuth, async (req: Request, res: Response) => {
   const createdIds: string[] = [];
   const errors: { index: number; detail: string }[] = [];
 
+  const mcqMaxAttempts = 3;
+
   for (let i = 0; i < prompts.length; i++) {
     const stem = prompts[i] ?? "";
+    const truth = await resolveGroundTruthAnswer(stem);
+    if (!truth) {
+      errors.push({ index: i, detail: "Could not resolve correct answer for question" });
+      continue;
+    }
+
     let stored = false;
-    for (let genAttempt = 0; genAttempt < 2 && !stored; genAttempt++) {
+    for (let genAttempt = 0; genAttempt < mcqMaxAttempts && !stored; genAttempt++) {
       try {
+        const userContent =
+          genAttempt === 0
+            ? [
+                "Definitive correct answer — exactly ONE of the four MCQ options MUST express this result (same value/meaning; wording can match typical MCQ style but must be reconcilable with the string below):",
+                truth,
+                "",
+                "Educator question:",
+                stem,
+              ].join("\n")
+            : [
+                "Your previous JSON was invalid, unparsable, or the four options did not contain the definitive correct answer.",
+                "",
+                "Definitive correct answer (one option must match this — regenerate all four options if needed):",
+                truth,
+                "",
+                "Regenerate a complete valid JSON object per the system instructions. Keep the educator question as the stem content; only add MCQ structure and four distinct options including the correct one.",
+                "",
+                "Educator question:",
+                stem,
+              ].join("\n");
+
         const raw = await chat(
-          [
-            { role: "system", content: ADMINISTER_SYSTEM },
-            {
-              role: "user",
-              content:
-                genAttempt === 0
-                  ? `Educator question:\n\n${stem}`
-                  : `The previous JSON was invalid, options were wrong, or the stem changed. Regenerate a complete MCQ for this question and keep the stem semantically identical to the educator question (same scenario and values). Output ONLY valid JSON as specified.\n\nEducator question:\n\n${stem}`,
-            },
-          ],
-          { maxTokens: 8192 },
+          [{ role: "system", content: ADMINISTER_SYSTEM }, { role: "user", content: userContent }],
+          { maxTokens: 8192, temperature: 0 },
         );
         let data: unknown;
         try {
           data = extractJsonObject(raw);
         } catch {
-          if (genAttempt === 1) errors.push({ index: i, detail: "Could not parse JSON" });
+          if (genAttempt === mcqMaxAttempts - 1) errors.push({ index: i, detail: "Could not parse MCQ JSON" });
           continue;
         }
         const m = McqAdministerSchema.safeParse(data);
         if (!m.success) {
-          if (genAttempt === 1) errors.push({ index: i, detail: "Invalid MCQ shape" });
+          if (genAttempt === mcqMaxAttempts - 1) errors.push({ index: i, detail: "Invalid MCQ shape" });
           continue;
         }
         const opts = m.data.options;
-        const verifiedIdx = await verifyMcqAnswer(stem, stem, opts, m.data.correctOptionIndex);
+        let verifiedIdx = findMatchingOptionIndex(opts, truth);
+        if (verifiedIdx === -1) {
+          const semIdx = await resolveSemanticOptionIndex(truth, opts);
+          if (semIdx != null) verifiedIdx = semIdx;
+        }
+        if (verifiedIdx === -1) {
+          if (genAttempt === mcqMaxAttempts - 1) {
+            errors.push({ index: i, detail: "MCQ options never included resolved correct answer" });
+          }
+          continue;
+        }
+
         const correct = opts[verifiedIdx] ?? "";
         if (!correct.trim()) {
-          if (genAttempt === 1) errors.push({ index: i, detail: "Invalid option index after verify" });
+          if (genAttempt === mcqMaxAttempts - 1) errors.push({ index: i, detail: "Empty option after alignment" });
           continue;
         }
         const promptHtml = await renderMarkdownToTrustedHtml(stem);
@@ -563,7 +640,7 @@ router.post("/administer", requireAuth, async (req: Request, res: Response) => {
         createdIds.push(row.id);
         stored = true;
       } catch (e) {
-        if (genAttempt === 1) {
+        if (genAttempt === mcqMaxAttempts - 1) {
           errors.push({ index: i, detail: e instanceof Error ? e.message : "Failed" });
         }
       }
