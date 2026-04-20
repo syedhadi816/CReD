@@ -145,7 +145,14 @@ export default function App() {
           sessionId: sid,
           questionIds: result.questionIds,
         });
-        setEducatorWarning(null);
+        const failed = prompts.length - result.created;
+        if (failed > 0) {
+          setEducatorWarning(
+            `${result.created} of ${prompts.length} question(s) administered. ${failed} failed to convert — try Administer again for any missing items.`,
+          );
+        } else {
+          setEducatorWarning(null);
+        }
       } else {
         setEducatorWarning(
           result.errors?.length

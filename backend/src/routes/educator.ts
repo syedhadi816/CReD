@@ -418,11 +418,9 @@ Do not replace it with a different setup; only adapt it into MCQ form.
 
 Distractors must be plausible but incorrect. Exactly one option must be mathematically correct — re-check all arithmetic before answering.
 
-No markdown fences—only the JSON object.`;
+No markdown fences—only the JSON object.
 
-function normalizeForMatch(s: string): string {
-  return s.replace(/\s+/g, " ").trim().toLowerCase();
-}
+The "prompt" string must stay faithful to the educator question, but the server stores the exact educator text shown above — you may still echo it in JSON.`;
 
 /** POST /api/educator/export-pdf — answer key PDF for kept prompts (Claude + pdfkit). */
 router.post("/export-pdf", requireAuth, async (req: Request, res: Response) => {
@@ -537,13 +535,6 @@ router.post("/administer", requireAuth, async (req: Request, res: Response) => {
         const m = McqAdministerSchema.safeParse(data);
         if (!m.success) {
           if (genAttempt === 1) errors.push({ index: i, detail: "Invalid MCQ shape" });
-          continue;
-        }
-        const promptMatches = normalizeForMatch(m.data.prompt) === normalizeForMatch(stem);
-        if (!promptMatches) {
-          if (genAttempt === 1) {
-            errors.push({ index: i, detail: "MCQ stem diverged from educator question" });
-          }
           continue;
         }
         const opts = m.data.options;
